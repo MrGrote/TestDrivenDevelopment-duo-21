@@ -6,18 +6,8 @@ class GamePiece{
     private Player colour;
     private Tile tile;
 
-    public GamePiece(){
-        this.colour = Player.WHITE;
-        this.tile = Tile.SOLDIER_ANT;
-    }
-
-    public GamePiece(Player colour){
+    public GamePiece(Player colour, Tile tile){
         this.colour = colour;
-        this.tile = Tile.SOLDIER_ANT;
-    }
-
-    public GamePiece(Tile tile){
-        this.colour = Player.WHITE;
         this.tile = tile;
     }
 
@@ -25,15 +15,16 @@ class GamePiece{
         return this.colour;
     }
 
-    public void setColour(Player colour){
-        this.colour = colour;
-    }
-
     public Tile getTile(){
         return this.tile;
     }
 
-    public void setTile(Tile tile){
-        this.tile = tile;
+    public boolean equals(Object other) {
+        if (other instanceof GamePiece) {
+            GamePiece otherGamePiece = (GamePiece) other;
+            return this.colour == otherGamePiece.getColour() && this.tile == otherGamePiece.getTile();
+        }
+        return false;
     }
+
 }
