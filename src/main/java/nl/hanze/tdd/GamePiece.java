@@ -1,7 +1,6 @@
 package nl.hanze.tdd;
 import nl.hanze.hive.Hive.Player;
 import nl.hanze.hive.Hive.Tile;
-
 class GamePiece{
     private Player colour;
     private Tile tile;
