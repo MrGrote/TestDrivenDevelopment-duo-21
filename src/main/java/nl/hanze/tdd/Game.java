@@ -2,6 +2,7 @@ package nl.hanze.tdd;
 
 import java.awt.Point;
 import java.util.Stack;
+import java.util.function.BooleanSupplier;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.ArrayList;
@@ -44,22 +45,20 @@ class Game implements nl.hanze.hive.Hive {
     public void play(Tile tile, int q, int r) throws IllegalMove {
         GamePiece piece = new GamePiece(this.currentPlayer, tile);
         Point point = new Point(q, r);
-        if (!this.pieces.contains(piece)){
+        if (!this.pieces.contains(piece)) {
             throw new IllegalMove();
-        }
-        else if(!(this.field.get(point) == null)){
+        } else if (!(this.field.get(point) == null)) {
             throw new IllegalMove();
-        }
-        else if (!this.isEmpty()){
+        } else if (!this.isEmpty()) {
             boolean found = false;
             Point[] neighbours = this.getNeigbours(point);
-            for (Point neighbour: neighbours){
-                if(this.field.containsKey(neighbour)){
+            for (Point neighbour : neighbours) {
+                if (this.field.containsKey(neighbour)) {
                     found = true;
                     break;
                 }
             }
-            if (!found){
+            if (!found) {
                 throw new IllegalMove();
             }
         }
@@ -79,7 +78,6 @@ class Game implements nl.hanze.hive.Hive {
 
     }
 
-    // TODO Auto-generated method stub
     @Override
     public void pass() throws IllegalMove {
         this.currentPlayer = getOpponent(this.currentPlayer);
@@ -88,14 +86,34 @@ class Game implements nl.hanze.hive.Hive {
 
     @Override
     public boolean isWinner(Player player) {
-        // TODO Auto-generated method stub
+        for (Point coordinate : this.field.keySet()) {
+            GamePiece piece = this.field.get(coordinate).peek();
+            if (piece.getTile().equals(Tile.QUEEN_BEE) && piece.getColour().equals(getOpponent(player))) {
+                Point[] neigbours = this.getNeigbours(coordinate);
+                return this.field.keySet().containsAll(Arrays.asList(neigbours));
+            }
+        }
         return false;
     }
 
     @Override
     public boolean isDraw() {
-        // TODO Auto-generated method stub
-        return false;
+
+        return this.isWinner(this.currentPlayer) && this.isWinner(this.getOpponent(this.currentPlayer));
+    }
+
+    public boolean bothPlayersPlayed() {
+        boolean black = false;
+        boolean white = false;
+        for (Point coordinate : this.field.keySet()) {
+            GamePiece piece = this.field.get(coordinate).peek();
+            if (piece.getColour().equals(Player.BLACK)) {
+                black = true;
+            } else {
+                white = true;
+            }
+        }
+        return black && white;
     }
 
 }
