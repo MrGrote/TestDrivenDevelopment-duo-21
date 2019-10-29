@@ -1,18 +1,17 @@
 package nl.hanze.tdd;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import nl.hanze.hive.Hive.IllegalMove;
 import nl.hanze.hive.Hive.Tile;
+import nl.hanze.hive.Hive.Player;
 
 import java.awt.Point;
 
@@ -153,36 +152,28 @@ class GameTests {
 
     @Test
     void whenColourQueenSurroundedThenColourNotWin() {
-        try {
-            game.play(Tile.QUEEN_BEE, 0, 0);
-            game.play(Tile.BEETLE, 0, -1);
-            game.play(Tile.BEETLE, -1, 0);
-            game.play(Tile.BEETLE, -1, 1);
-            game.play(Tile.BEETLE, 1, -1);
-            game.play(Tile.GRASSHOPPER, 1, 0);
-            game.play(Tile.GRASSHOPPER, 0, 1);
-        } catch (IllegalMove e) {
-            fail(e);
-        }
+        game.put(new GamePiece(Player.BLACK, Tile.QUEEN_BEE), new Point(0, 0));
+        game.put(new GamePiece(Player.BLACK, Tile.GRASSHOPPER), new Point(0, -1));
+        game.put(new GamePiece(Player.BLACK, Tile.BEETLE), new Point(-1, 0));
+        game.put(new GamePiece(Player.BLACK, Tile.BEETLE), new Point(-1, 1));
+        game.put(new GamePiece(Player.BLACK, Tile.BEETLE), new Point(1, -1));
+        game.put(new GamePiece(Player.BLACK, Tile.BEETLE), new Point(1, 0));
+        game.put(new GamePiece(Player.BLACK, Tile.GRASSHOPPER), new Point(0, 1));
         assertFalse(game.isWinner(nl.hanze.hive.Hive.Player.WHITE));
     }
 
     @Test
     void whenBothQueenSurroundedThenDraw() {
-        try {
-            game.play(Tile.QUEEN_BEE, 0, 0);
-            game.play(Tile.QUEEN_BEE, 0, -1);
-            game.play(Tile.BEETLE, -1, 0);
-            game.play(Tile.BEETLE, -1, 1);
-            game.play(Tile.BEETLE, 1, -1);
-            game.play(Tile.GRASSHOPPER, 1, 0);
-            game.play(Tile.GRASSHOPPER, 0, 1);
-            game.play(Tile.GRASSHOPPER, -1, -1);
-            game.play(Tile.GRASSHOPPER, 0, -2);
-            game.play(Tile.GRASSHOPPER, 1, -2);
-        } catch (IllegalMove e) {
-            fail(e);
-        }
+        game.put(new GamePiece(Player.BLACK, Tile.QUEEN_BEE), new Point(0, 0));
+        game.put(new GamePiece(Player.WHITE, Tile.QUEEN_BEE), new Point(0, -1));
+        game.put(new GamePiece(Player.BLACK, Tile.BEETLE), new Point(-1, 0));
+        game.put(new GamePiece(Player.BLACK, Tile.BEETLE), new Point(-1, 1));
+        game.put(new GamePiece(Player.BLACK, Tile.BEETLE), new Point(1, -1));
+        game.put(new GamePiece(Player.BLACK, Tile.BEETLE), new Point(1, 0));
+        game.put(new GamePiece(Player.BLACK, Tile.BEETLE), new Point(0, 1));
+        game.put(new GamePiece(Player.BLACK, Tile.BEETLE), new Point(-1, -1));
+        game.put(new GamePiece(Player.BLACK, Tile.BEETLE), new Point(0, -2));
+        game.put(new GamePiece(Player.BLACK, Tile.BEETLE), new Point(1, -2));
         assertTrue(game.isDraw());
     }
 
@@ -213,11 +204,11 @@ class GameTests {
     }
 
     @Test
-    void givenBothPlayedWhenPlayAdjecentOpponentThenIllegalMove(){
+    void givenBothPlayedWhenPlayAdjecentOpponentThenIllegalMove() {
         try {
             game.play(Tile.QUEEN_BEE, 0, 0);
             game.play(Tile.QUEEN_BEE, 0, 1);
-        } catch(IllegalMove e){
+        } catch (IllegalMove e) {
             fail(e);
         }
         assertThrows(IllegalMove.class, () -> game.play(Tile.BEETLE, 1, 0));

@@ -2,9 +2,7 @@ package nl.hanze.tdd;
 
 import java.awt.Point;
 import java.util.Stack;
-import java.util.function.BooleanSupplier;
 import java.util.HashMap;
-import java.util.Set;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -12,11 +10,10 @@ class Game implements nl.hanze.hive.Hive {
     private ArrayList<GamePiece> pieces = new ArrayList<>();
     private HashMap<Point, Stack<GamePiece>> field = new HashMap<>(22, 1);
     private Player currentPlayer = Player.WHITE;
-    private nl.hanze.tdd.Player[] players = new nl.hanze.tdd.Player[2];
 
     public Game() {
-        pieces.addAll(Arrays.asList(new nl.hanze.tdd.Player(Player.WHITE).getPieces()));
-        pieces.addAll(Arrays.asList(new nl.hanze.tdd.Player(Player.BLACK).getPieces()));
+        this.pieces.addAll(Arrays.asList(new nl.hanze.tdd.Player(Player.WHITE).getPieces()));
+        this.pieces.addAll(Arrays.asList(new nl.hanze.tdd.Player(Player.BLACK).getPieces()));
     }
 
     public Point[] getNeigbours(Point p) {
@@ -47,9 +44,11 @@ class Game implements nl.hanze.hive.Hive {
         Point point = new Point(q, r);
         if (!this.pieces.contains(piece)) {
             throw new IllegalMove();
-        } else if (!(this.field.get(point) == null)) {
+        }
+        if (!(this.field.get(point) == null)) {
             throw new IllegalMove();
-        } else if (!this.isEmpty()) {
+        }
+        if (!this.isEmpty()) {
             boolean found = false;
             Point[] neighbours = this.getNeigbours(point);
             for (Point neighbour : neighbours) {
@@ -62,14 +61,30 @@ class Game implements nl.hanze.hive.Hive {
                 throw new IllegalMove();
             }
         }
-
+        if (bothPlayersPlayed()) {
+            Player opponent = getOpponent(this.currentPlayer);
+            for (Point neigbour : this.getNeigbours(point)) {
+                if (this.field.containsKey(neigbour)) {
+                    if (this.field.get(neigbour).peek().getColour().equals(opponent)) {
+                        throw new IllegalMove();
+                    }
+                }
+            }
+        }
         this.pieces.remove(piece);
-
-        Stack<GamePiece> stack = new Stack<>();
-        stack.push(piece);
-        field.put(point, stack);
+        this.put(piece, point);
 
         this.currentPlayer = getOpponent(this.currentPlayer);
+    }
+
+    public void put(GamePiece piece, Point point) {
+        if (this.field.keySet().contains(point)) {
+            this.field.get(point).push(piece);
+        } else {
+            Stack<GamePiece> stack = new Stack<>();
+            stack.push(piece);
+            this.field.put(point, stack);
+        }
     }
 
     @Override
@@ -98,7 +113,6 @@ class Game implements nl.hanze.hive.Hive {
 
     @Override
     public boolean isDraw() {
-
         return this.isWinner(this.currentPlayer) && this.isWinner(this.getOpponent(this.currentPlayer));
     }
 
