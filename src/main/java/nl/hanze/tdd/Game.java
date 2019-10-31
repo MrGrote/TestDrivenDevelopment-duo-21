@@ -5,6 +5,7 @@ import java.util.Stack;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EmptyStackException;
 
 class Game implements nl.hanze.hive.Hive {
     private ArrayList<GamePiece> pieces = new ArrayList<>();
@@ -89,6 +90,21 @@ class Game implements nl.hanze.hive.Hive {
 
     @Override
     public void move(int fromQ, int fromR, int toQ, int toR) throws IllegalMove {
+        if (!pieces.contains(new GamePiece(this.currentPlayer, Tile.QUEEN_BEE))){
+            throw new IllegalMove();
+        }
+        try {
+            GamePiece piece = this.field.get(new Point(fromQ, fromR)).peek();
+            if (!piece.getColour().equals(this.currentPlayer)) {
+                throw new IllegalMove();
+            }
+            this.field.get(new Point(fromQ, fromR)).pop();
+            this.put(piece, new Point(toQ, toR));
+        } catch (EmptyStackException e) {
+            throw new IllegalMove();
+        } catch (NullPointerException e) {
+            throw new IllegalMove();
+        }
         this.currentPlayer = getOpponent(this.currentPlayer);
 
     }

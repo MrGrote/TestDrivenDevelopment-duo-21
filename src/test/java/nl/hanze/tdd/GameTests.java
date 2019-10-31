@@ -57,16 +57,17 @@ class GameTests {
 
     @Test
     void whenMadeMoveNextActive() {
+        game.put(new GamePiece(Player.WHITE, Tile.QUEEN_BEE), new Point(0, 0));
         try {
-            game.move(0, 0, 1, 1);
+            game.move(0, 0, 0, 1);
+            assertEquals(nl.hanze.hive.Hive.Player.BLACK, game.getCurrentPlayer());
+
+            game.put(new GamePiece(Player.BLACK, Tile.QUEEN_BEE), new Point(1, 1));
+            game.move(1, 1, 1, 0);
+            assertEquals(nl.hanze.hive.Hive.Player.WHITE, game.getCurrentPlayer());
         } catch (IllegalMove e) {
+            fail(e);
         }
-        assertEquals(nl.hanze.hive.Hive.Player.BLACK, game.getCurrentPlayer());
-        try {
-            game.move(0, 0, 1, 1);
-        } catch (IllegalMove e) {
-        }
-        assertEquals(nl.hanze.hive.Hive.Player.WHITE, game.getCurrentPlayer());
     }
 
     @Test
@@ -136,23 +137,19 @@ class GameTests {
 
     @Test
     void whenColourQueenSurroundedThenOppositeColourWin() {
-        try {
-            game.play(Tile.QUEEN_BEE, 0, 0);
-            game.play(Tile.BEETLE, 0, -1);
-            game.play(Tile.BEETLE, -1, 0);
-            game.play(Tile.BEETLE, -1, 1);
-            game.play(Tile.BEETLE, 1, -1);
-            game.play(Tile.GRASSHOPPER, 1, 0);
-            game.play(Tile.GRASSHOPPER, 0, 1);
-        } catch (IllegalMove e) {
-            fail(e);
-        }
+        game.put(new GamePiece(Player.WHITE, Tile.QUEEN_BEE), new Point(0, 0));
+        game.put(new GamePiece(Player.BLACK, Tile.GRASSHOPPER), new Point(0, -1));
+        game.put(new GamePiece(Player.BLACK, Tile.BEETLE), new Point(-1, 0));
+        game.put(new GamePiece(Player.BLACK, Tile.BEETLE), new Point(-1, 1));
+        game.put(new GamePiece(Player.BLACK, Tile.BEETLE), new Point(1, -1));
+        game.put(new GamePiece(Player.BLACK, Tile.BEETLE), new Point(1, 0));
+        game.put(new GamePiece(Player.BLACK, Tile.GRASSHOPPER), new Point(0, 1));
         assertTrue(game.isWinner(nl.hanze.hive.Hive.Player.BLACK));
     }
 
     @Test
     void whenColourQueenSurroundedThenColourNotWin() {
-        game.put(new GamePiece(Player.BLACK, Tile.QUEEN_BEE), new Point(0, 0));
+        game.put(new GamePiece(Player.WHITE, Tile.QUEEN_BEE), new Point(0, 0));
         game.put(new GamePiece(Player.BLACK, Tile.GRASSHOPPER), new Point(0, -1));
         game.put(new GamePiece(Player.BLACK, Tile.BEETLE), new Point(-1, 0));
         game.put(new GamePiece(Player.BLACK, Tile.BEETLE), new Point(-1, 1));
@@ -214,4 +211,47 @@ class GameTests {
         assertThrows(IllegalMove.class, () -> game.play(Tile.BEETLE, 1, 0));
     }
 
+    @Test
+    void givenEmptyBoardWhenMoveThenIllegalMove() {
+        assertThrows(IllegalMove.class, () -> {
+            game.move(0, 0, 0, 0);
+        });
+    }
+
+    @Test
+    void givenSpaceOccupiedWhenMoveThenMoved() {
+        game.put(new GamePiece(Player.WHITE, Tile.QUEEN_BEE), new Point(0, 0));
+        try {
+            game.move(0, 0, 0, 1);
+
+        } catch (IllegalMove e) {
+            fail(e);
+        }
+    }
+
+    @Test
+    void whenMoveOpponentPieceThenIllegalMove() {
+        game.put(new GamePiece(Player.BLACK, Tile.QUEEN_BEE), new Point(0, 0));
+        assertThrows(IllegalMove.class, () -> {
+            game.move(0, 0, 0, 1);
+        });
+    }
+
+    @Test
+    void givenNoColourQueenPlacedWhenMoveThenIllegalMove() {
+        try {
+            game.play(Tile.QUEEN_BEE, 0, 0);
+            game.pass();
+        } catch (IllegalMove e) {
+            fail(e);
+        }
+        assertThrows(IllegalMove.class, () -> {
+            game.move(0, 0, 0, 1);
+        });
+    }
+
+    @Test
+    void whenMoveThenAdjecent() {
+        
+    }
 }
