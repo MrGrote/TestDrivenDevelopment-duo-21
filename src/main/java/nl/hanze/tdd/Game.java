@@ -1,11 +1,11 @@
 package nl.hanze.tdd;
 
 import java.awt.Point;
-import java.util.Stack;
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EmptyStackException;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.lang.Math.min;
 
 class Game implements nl.hanze.hive.Hive {
     private ArrayList<GamePiece> pieces = new ArrayList<>();
@@ -18,8 +18,8 @@ class Game implements nl.hanze.hive.Hive {
     }
 
     public Point[] getNeigbours(Point p) {
-        Point[] ret = { new Point(p.x, p.y - 1), new Point(p.x - 1, p.y), new Point(p.x - 1, p.y + 1),
-                new Point(p.x + 1, p.y - 1), new Point(p.x + 1, p.y), new Point(p.x, p.y + 1) };
+        Point[] ret = {new Point(p.x, p.y - 1), new Point(p.x - 1, p.y), new Point(p.x - 1, p.y + 1),
+                new Point(p.x + 1, p.y - 1), new Point(p.x + 1, p.y), new Point(p.x, p.y + 1)};
         return ret;
     }
 
@@ -37,6 +37,10 @@ class Game implements nl.hanze.hive.Hive {
         } else {
             return Player.WHITE;
         }
+    }
+
+    public Stack<GamePiece> getHexagon(Point point) {
+        return this.field.get(point);
     }
 
     @Override
@@ -61,6 +65,8 @@ class Game implements nl.hanze.hive.Hive {
             if (!found) {
                 throw new IllegalMove();
             }
+
+
         }
         if (bothPlayersPlayed()) {
             Player opponent = getOpponent(this.currentPlayer);
@@ -90,21 +96,39 @@ class Game implements nl.hanze.hive.Hive {
 
     @Override
     public void move(int fromQ, int fromR, int toQ, int toR) throws IllegalMove {
-        if (!pieces.contains(new GamePiece(this.currentPlayer, Tile.QUEEN_BEE))){
+        if (pieces.contains(new GamePiece(this.currentPlayer, Tile.QUEEN_BEE))) {
             throw new IllegalMove();
         }
+        Point point = new Point(fromQ, fromR);
         try {
-            GamePiece piece = this.field.get(new Point(fromQ, fromR)).peek();
+            GamePiece piece = this.field.get(point).peek();
             if (!piece.getColour().equals(this.currentPlayer)) {
                 throw new IllegalMove();
             }
-            this.field.get(new Point(fromQ, fromR)).pop();
+            this.field.get(point).pop();
+            if (this.field.get(point).isEmpty()) {
+                this.field.remove(point);
+            }
+            ;
+            boolean found = false;
+            Point[] neighbours = this.getNeigbours(new Point(toQ, toR));
+            for (Point neighbour : neighbours) {
+                if (this.field.containsKey(neighbour)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                this.put(piece, point);
+                throw new IllegalMove();
+            }
             this.put(piece, new Point(toQ, toR));
         } catch (EmptyStackException e) {
             throw new IllegalMove();
         } catch (NullPointerException e) {
             throw new IllegalMove();
         }
+
         this.currentPlayer = getOpponent(this.currentPlayer);
 
     }
@@ -146,4 +170,69 @@ class Game implements nl.hanze.hive.Hive {
         return black && white;
     }
 
+    public boolean isValidState() {
+        Point first = (Point) this.field.keySet().toArray()[0];
+        Set<Point> allPoints = new HashSet<>();
+        Set<Point> newPoints = new HashSet<>();
+        newPoints.add(first);
+        allPoints.add(first);
+        while (!newPoints.isEmpty()) {
+            for (Point point : newPoints.toArray(new Point[0])) {
+                newPoints.remove(point);
+                for (Point neighbour : this.getNeigbours(point)) {
+                    if (this.field.containsKey(neighbour)) {
+                        if (!allPoints.contains(neighbour)) {
+                            newPoints.add(neighbour);
+                            allPoints.add(neighbour);
+                        }
+                    }
+                }
+            }
+
+        }
+        return this.field.keySet().equals(allPoints);
+    }
+
+    private boolean canPush(Point from, Point to) {
+        Set<Point> sharedNeighbours = new HashSet<>();
+        Set<Point> fromNeighbours = new HashSet<>();
+
+        for (Point neighbour : this.getNeigbours(from)) {
+            if (this.field.containsKey(neighbour)) {
+                fromNeighbours.add(neighbour);
+            }
+        }
+        for (Point neighbour : this.getNeigbours(to)) {
+            if (this.field.containsKey(neighbour)) {
+                if (fromNeighbours.contains(neighbour)) {
+                    sharedNeighbours.add(neighbour);
+                }
+            }
+        }
+        if (sharedNeighbours.size() == 1) {
+            return  true;
+        }
+        if (sharedNeighbours.size() == 0) {
+            return  false;
+        }
+        int minimum = sharedNeighbours.stream().map(this::getHeight).min(Integer::compare).get();
+        return minimum <= min(this.getHeight(from) - 1, this.getHeight(to));
+    }
+
+    public void push(Point from, Point to) throws IllegalMove {
+        if (canPush(from, to)) {
+            move(from.x, from.y, to.x, to.y);
+        } else {
+            throw new IllegalMove();
+        }
+    }
+
+    public int getHeight(Point point) {
+        if (this.field.containsKey(point)) {
+            return this.field.get(point).size();
+        } else {
+            return 0;
+        }
+
+    }
 }
