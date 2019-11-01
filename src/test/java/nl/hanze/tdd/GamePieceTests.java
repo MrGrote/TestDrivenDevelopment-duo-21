@@ -4,39 +4,41 @@ import org.junit.jupiter.api.Test;
 import nl.hanze.hive.Hive.Player;
 import nl.hanze.hive.Hive.Tile;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class GamePieceTests {
     @Test
-    void whenColourThenColourNotNull(){
+    void whenColourThenColourNotNull() {
         GamePiece piece = new GamePiece(Player.BLACK, Tile.SPIDER);
         Player colour = piece.getColour();
         assertNotNull(colour);
     }
 
     @Test
-    void givenColourWhenColourThenColour(){
+    void givenColourWhenColourThenColour() {
         GamePiece piece = new GamePiece(Player.BLACK, Tile.SPIDER);
         Player colour = piece.getColour();
         assertEquals(colour, Player.BLACK);
     }
 
     @Test
-    void whenTileThenTileNotNull(){
+    void whenTileThenTileNotNull() {
         GamePiece piece = new GamePiece(Player.BLACK, Tile.SPIDER);
         Tile tile = piece.getTile();
         assertNotNull(tile);
     }
 
     @Test
-    void givenTileWhenTileThenTile(){
+    void givenTileWhenTileThenTile() {
         GamePiece piece = new GamePiece(Player.BLACK, Tile.QUEEN_BEE);
         Tile tile = piece.getTile();
         assertEquals(tile, Tile.QUEEN_BEE);
     }
 
     @Test
-    void GivenTileAndColourWhenTileAndColourThenTileAndColor(){
+    void givenTileAndColourWhenTileAndColourThenTileAndColor() {
         GamePiece piece = new GamePiece(Player.WHITE, Tile.QUEEN_BEE);
         Player colour = piece.getColour();
         Tile tile = piece.getTile();

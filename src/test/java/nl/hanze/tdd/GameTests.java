@@ -17,6 +17,7 @@ import java.awt.Point;
 
 class GameTests {
 
+    /** A game object for use in the tests. */
     private Game game;
 
 
@@ -34,8 +35,14 @@ class GameTests {
     @Test
     void whenGetNeigboursThenCorrectNeighbours() {
         Point[] neigbours = game.getNeigbours(new Point());
-        Point[] knownNeigbours = {new Point(0, -1), new Point(-1, 0), new Point(-1, 1), new Point(1, -1),
-                new Point(1, 0), new Point(0, 1)};
+        Point[] knownNeigbours = {
+            new Point(0, -1),
+            new Point(-1, 0),
+            new Point(-1, 1),
+            new Point(1, -1),
+            new Point(1, 0),
+            new Point(0, 1)
+        };
         outside:
         for (Point knownNeigbour : knownNeigbours) {
             for (Point neigbour : neigbours) {
@@ -64,10 +71,13 @@ class GameTests {
             game.play(Tile.QUEEN_BEE, 0, 0);
             game.play(Tile.QUEEN_BEE, 1, 0);
             game.move(0, 0, 0, 1);
-            assertEquals(nl.hanze.hive.Hive.Player.BLACK, game.getCurrentPlayer());
-            game.put(new GamePiece(Player.WHITE, Tile.GRASSHOPPER), new Point(2, -1));
+            assertEquals(nl.hanze.hive.Hive.Player.BLACK,
+                game.getCurrentPlayer());
+            game.put(new GamePiece(Player.WHITE, Tile.GRASSHOPPER),
+                new Point(2, -1));
             game.move(1, 0, 1, -1);
-            assertEquals(nl.hanze.hive.Hive.Player.WHITE, game.getCurrentPlayer());
+            assertEquals(nl.hanze.hive.Hive.Player.WHITE,
+                game.getCurrentPlayer());
         } catch (IllegalMove e) {
             fail(e);
         }
@@ -141,24 +151,28 @@ class GameTests {
     @Test
     void whenColourQueenSurroundedThenOppositeColourWin() {
         game.put(new GamePiece(Player.WHITE, Tile.QUEEN_BEE), new Point(0, 0));
-        game.put(new GamePiece(Player.BLACK, Tile.GRASSHOPPER), new Point(0, -1));
+        game.put(new GamePiece(Player.BLACK, Tile.GRASSHOPPER),
+            new Point(0, -1));
         game.put(new GamePiece(Player.BLACK, Tile.BEETLE), new Point(-1, 0));
         game.put(new GamePiece(Player.BLACK, Tile.BEETLE), new Point(-1, 1));
         game.put(new GamePiece(Player.BLACK, Tile.BEETLE), new Point(1, -1));
         game.put(new GamePiece(Player.BLACK, Tile.BEETLE), new Point(1, 0));
-        game.put(new GamePiece(Player.BLACK, Tile.GRASSHOPPER), new Point(0, 1));
+        game.put(new GamePiece(Player.BLACK, Tile.GRASSHOPPER),
+            new Point(0, 1));
         assertTrue(game.isWinner(nl.hanze.hive.Hive.Player.BLACK));
     }
 
     @Test
     void whenColourQueenSurroundedThenColourNotWin() {
         game.put(new GamePiece(Player.WHITE, Tile.QUEEN_BEE), new Point(0, 0));
-        game.put(new GamePiece(Player.BLACK, Tile.GRASSHOPPER), new Point(0, -1));
+        game.put(new GamePiece(Player.BLACK, Tile.GRASSHOPPER),
+            new Point(0, -1));
         game.put(new GamePiece(Player.BLACK, Tile.BEETLE), new Point(-1, 0));
         game.put(new GamePiece(Player.BLACK, Tile.BEETLE), new Point(-1, 1));
         game.put(new GamePiece(Player.BLACK, Tile.BEETLE), new Point(1, -1));
         game.put(new GamePiece(Player.BLACK, Tile.BEETLE), new Point(1, 0));
-        game.put(new GamePiece(Player.BLACK, Tile.GRASSHOPPER), new Point(0, 1));
+        game.put(new GamePiece(Player.BLACK, Tile.GRASSHOPPER),
+            new Point(0, 1));
         assertFalse(game.isWinner(nl.hanze.hive.Hive.Player.WHITE));
     }
 
@@ -239,7 +253,8 @@ class GameTests {
         assertThrows(NullPointerException.class, () -> {
             game.getHexagon(new Point(0, 0)).peek();
         });
-        assertEquals(new GamePiece(Player.WHITE, Tile.QUEEN_BEE), game.getHexagon(new Point(0, 1)).peek());
+        assertEquals(new GamePiece(Player.WHITE, Tile.QUEEN_BEE),
+            game.getHexagon(new Point(0, 1)).peek());
     }
 
     @Test
@@ -323,14 +338,15 @@ class GameTests {
             game.play(Tile.QUEEN_BEE, 0, 0);
             game.pass();
             game.push(new Point(0, 0), new Point(-1, 0));
-        } catch (IllegalMove e){
+        } catch (IllegalMove e) {
             fail(e);
         }
-        assertEquals(new GamePiece(Player.BLACK, Tile.QUEEN_BEE), game.getHexagon(new Point(-1, 0)).peek());
+        assertEquals(new GamePiece(Player.BLACK, Tile.QUEEN_BEE),
+            game.getHexagon(new Point(-1, 0)).peek());
     }
 
     @Test
-    void whenUnconnectedPushThenIllegalMove(){
+    void whenUnconnectedPushThenIllegalMove() {
         game.put(new GamePiece(Player.WHITE, Tile.BEETLE), new Point(-1, -1));
         game.put(new GamePiece(Player.WHITE, Tile.BEETLE), new Point(1, -1));
         game.put(new GamePiece(Player.BLACK, Tile.SPIDER), new Point(0, -2));
@@ -338,7 +354,7 @@ class GameTests {
         try {
             game.play(Tile.QUEEN_BEE, 0, 0);
             game.pass();
-        } catch (IllegalMove e){
+        } catch (IllegalMove e) {
             fail(e);
         }
         assertThrows(IllegalMove.class, () -> {

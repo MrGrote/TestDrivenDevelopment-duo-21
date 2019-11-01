@@ -2,11 +2,12 @@ package nl.hanze.tdd;
 
 import nl.hanze.hive.Hive.Tile;
 
-class Player{
+class Player {
+    /** An array of gamepieces avaiable to that player. */
     private GamePiece[] pieces;
 
-    public Player(nl.hanze.hive.Hive.Player colour){
-        GamePiece[] pieces = {
+     Player(final nl.hanze.hive.Hive.Player colour) {
+        this.pieces = new GamePiece[] {
             new GamePiece(colour, Tile.QUEEN_BEE),
             new GamePiece(colour, Tile.BEETLE),
             new GamePiece(colour, Tile.BEETLE),
@@ -19,10 +20,13 @@ class Player{
             new GamePiece(colour, Tile.SOLDIER_ANT),
             new GamePiece(colour, Tile.SOLDIER_ANT),
         };
-        this.pieces = pieces;
     }
 
-    public GamePiece[] getPieces(){
+    /**
+     * Get an array of all avaiable gamepieces.
+     * @return an array of all avaiable pieces
+     */
+    public GamePiece[] getPieces() {
         return this.pieces;
     }
 }

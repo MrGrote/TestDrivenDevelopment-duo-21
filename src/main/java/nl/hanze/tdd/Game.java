@@ -1,37 +1,78 @@
 package nl.hanze.tdd;
 
 import java.awt.Point;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EmptyStackException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
+import nl.hanze.hive.Hive;
 
 import static java.lang.Math.min;
 
-class Game implements nl.hanze.hive.Hive {
-    private ArrayList<GamePiece> pieces = new ArrayList<>();
-    private HashMap<Point, Stack<GamePiece>> field = new HashMap<>(22, 1);
+/**
+ * The main game class.
+ */
+class Game implements Hive {
+    /** A List of pieces that can still be placed. */
+    private List<GamePiece> pieces = new ArrayList<>();
+    /** A Map of points and stacks of gamepiees representing the board. */
+    private Map<Point, Stack<GamePiece>> field = new HashMap<>();
+    /** The player whose turn it is. */
     private Player currentPlayer = Player.WHITE;
 
-    public Game() {
-        this.pieces.addAll(Arrays.asList(new nl.hanze.tdd.Player(Player.WHITE).getPieces()));
-        this.pieces.addAll(Arrays.asList(new nl.hanze.tdd.Player(Player.BLACK).getPieces()));
+    /**
+     * Create a game.
+     */
+    Game() {
+        this.pieces.addAll(
+            Arrays.asList(new nl.hanze.tdd.Player(Player.WHITE).getPieces()));
+        this.pieces.addAll(
+            Arrays.asList(new nl.hanze.tdd.Player(Player.BLACK).getPieces()));
     }
 
-    public Point[] getNeigbours(Point p) {
-        Point[] ret = {new Point(p.x, p.y - 1), new Point(p.x - 1, p.y), new Point(p.x - 1, p.y + 1),
-                new Point(p.x + 1, p.y - 1), new Point(p.x + 1, p.y), new Point(p.x, p.y + 1)};
-        return ret;
+    /**
+     * Gets all the neighbours of point p.
+     * @param p The point of which to get the neighbours
+     * @return The neighbours of Point p
+     */
+    public Point[] getNeigbours(final Point p) {
+        return new Point[] {
+            new Point(p.x, p.y - 1),
+            new Point(p.x - 1, p.y),
+            new Point(p.x - 1, p.y + 1),
+            new Point(p.x + 1, p.y - 1),
+            new Point(p.x + 1, p.y),
+            new Point(p.x, p.y + 1)
+        };
     }
 
+    /**
+     * Check wether there are any pieces on the board.
+     * @return a boolean indicating wether the field is empty
+     */
     public boolean isEmpty() {
         return this.field.isEmpty();
     }
 
+    /**
+     * Get the current player.
+     * @return the current player.
+     */
     public Player getCurrentPlayer() {
         return this.currentPlayer;
     }
 
-    private Player getOpponent(Player player) {
+    /**
+     * Get the opponent of the player.
+     * @param player the player whose opponent to find
+     * @return the opponent of player
+     */
+    private Player getOpponent(final Player player) {
         if (player == Player.WHITE) {
             return Player.BLACK;
         } else {
@@ -39,12 +80,20 @@ class Game implements nl.hanze.hive.Hive {
         }
     }
 
-    public Stack<GamePiece> getHexagon(Point point) {
+    /**
+     * Get the stack of gamepieces at location point.
+     * @param point the location
+     * @return the stack at location point
+     */
+    public Stack<GamePiece> getHexagon(final Point point) {
         return this.field.get(point);
     }
 
     @Override
-    public void play(Tile tile, int q, int r) throws IllegalMove {
+    public void play(
+        final Tile tile,
+        final int q,
+        final int r) throws IllegalMove {
         GamePiece piece = new GamePiece(this.currentPlayer, tile);
         Point point = new Point(q, r);
         if (!this.pieces.contains(piece)) {
@@ -66,13 +115,15 @@ class Game implements nl.hanze.hive.Hive {
                 throw new IllegalMove();
             }
 
-
         }
         if (bothPlayersPlayed()) {
             Player opponent = getOpponent(this.currentPlayer);
             for (Point neigbour : this.getNeigbours(point)) {
                 if (this.field.containsKey(neigbour)) {
-                    if (this.field.get(neigbour).peek().getColour().equals(opponent)) {
+                    if (this.field.get(neigbour)
+                                  .peek()
+                                  .getColour()
+                                  .equals(opponent)) {
                         throw new IllegalMove();
                     }
                 }
@@ -84,7 +135,12 @@ class Game implements nl.hanze.hive.Hive {
         this.currentPlayer = getOpponent(this.currentPlayer);
     }
 
-    public void put(GamePiece piece, Point point) {
+    /**
+     * Put a piece on the board at the location of point.
+     * @param piece the piece to place
+     * @param point the location to place the piece at
+     */
+    public void put(final GamePiece piece, final Point point) {
         if (this.field.keySet().contains(point)) {
             this.field.get(point).push(piece);
         } else {
@@ -95,8 +151,13 @@ class Game implements nl.hanze.hive.Hive {
     }
 
     @Override
-    public void move(int fromQ, int fromR, int toQ, int toR) throws IllegalMove {
-        if (pieces.contains(new GamePiece(this.currentPlayer, Tile.QUEEN_BEE))) {
+    public void move(final int fromQ,
+                     final int fromR,
+                     final int toQ,
+                     final int toR) throws IllegalMove {
+        if (this.pieces.contains(
+            new GamePiece(this.currentPlayer, Tile.QUEEN_BEE)
+            )) {
             throw new IllegalMove();
         }
         Point point = new Point(fromQ, fromR);
@@ -109,7 +170,6 @@ class Game implements nl.hanze.hive.Hive {
             if (this.field.get(point).isEmpty()) {
                 this.field.remove(point);
             }
-            ;
             boolean found = false;
             Point[] neighbours = this.getNeigbours(new Point(toQ, toR));
             for (Point neighbour : neighbours) {
@@ -140,12 +200,15 @@ class Game implements nl.hanze.hive.Hive {
     }
 
     @Override
-    public boolean isWinner(Player player) {
+    public boolean isWinner(final Player player) {
         for (Point coordinate : this.field.keySet()) {
             GamePiece piece = this.field.get(coordinate).peek();
-            if (piece.getTile().equals(Tile.QUEEN_BEE) && piece.getColour().equals(getOpponent(player))) {
+            if (piece.getTile().equals(Tile.QUEEN_BEE)
+            && piece.getColour().equals(getOpponent(player))) {
                 Point[] neigbours = this.getNeigbours(coordinate);
-                return this.field.keySet().containsAll(Arrays.asList(neigbours));
+                return this.field
+                           .keySet()
+                           .containsAll(Arrays.asList(neigbours));
             }
         }
         return false;
@@ -153,9 +216,14 @@ class Game implements nl.hanze.hive.Hive {
 
     @Override
     public boolean isDraw() {
-        return this.isWinner(this.currentPlayer) && this.isWinner(this.getOpponent(this.currentPlayer));
+        return this.isWinner(this.currentPlayer)
+            && this.isWinner(this.getOpponent(this.currentPlayer));
     }
 
+    /**
+     * Checks wether both players have played a piece.
+     * @return true if both players have played a piece, else false
+     */
     public boolean bothPlayersPlayed() {
         boolean black = false;
         boolean white = false;
@@ -170,6 +238,10 @@ class Game implements nl.hanze.hive.Hive {
         return black && white;
     }
 
+    /**
+     * checks wether the board is in a legal state.
+     * @return a boolean indicating wether the board is in a legal state
+     */
     public boolean isValidState() {
         Point first = (Point) this.field.keySet().toArray()[0];
         Set<Point> allPoints = new HashSet<>();
@@ -193,7 +265,13 @@ class Game implements nl.hanze.hive.Hive {
         return this.field.keySet().equals(allPoints);
     }
 
-    private boolean canPush(Point from, Point to) {
+    /**
+     * Check wether a stone can be pushed to a certain location.
+     * @param from origin point
+     * @param to destination point
+     * @return boolean indicating wether the push can be done.
+     */
+    private boolean canPush(final Point from, final Point to) {
         Set<Point> sharedNeighbours = new HashSet<>();
         Set<Point> fromNeighbours = new HashSet<>();
 
@@ -210,16 +288,25 @@ class Game implements nl.hanze.hive.Hive {
             }
         }
         if (sharedNeighbours.size() == 1) {
-            return  true;
+            return true;
         }
         if (sharedNeighbours.size() == 0) {
-            return  false;
+            return false;
         }
-        int minimum = sharedNeighbours.stream().map(this::getHeight).min(Integer::compare).get();
+        int minimum = sharedNeighbours.stream()
+                                      .map(this::getHeight)
+                                      .min(Integer::compare)
+                                      .get();
         return minimum <= min(this.getHeight(from) - 1, this.getHeight(to));
     }
 
-    public void push(Point from, Point to) throws IllegalMove {
+    /**
+     * Push stone from origin to destination.
+     * @param from origin point
+     * @param to destination point
+     * @throws IllegalMove when push obstructed
+     */
+    public void push(final Point from, final Point to) throws IllegalMove {
         if (canPush(from, to)) {
             move(from.x, from.y, to.x, to.y);
         } else {
@@ -227,7 +314,12 @@ class Game implements nl.hanze.hive.Hive {
         }
     }
 
-    public int getHeight(Point point) {
+    /**
+     * Get the height of a hexagon.
+     * @param point the location of the hexagon
+     * @return the height of the hexagon
+     */
+    public int getHeight(final Point point) {
         if (this.field.containsKey(point)) {
             return this.field.get(point).size();
         } else {
