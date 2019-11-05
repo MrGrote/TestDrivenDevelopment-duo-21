@@ -98,7 +98,7 @@ class Game implements Hive {
         if (!this.pieces.contains(piece)) {
             throw new IllegalMove();
         }
-        if (!(this.field.get(point) == null)) {
+        if (!(this.getHexagon(point) == null)) {
             throw new IllegalMove();
         }
 
@@ -136,7 +136,7 @@ private boolean hasNeighbours(final Point point) {
         Player opponent = getOpponent(this.currentPlayer);
         for (Point neigbour : this.getNeigbours(point)) {
             if (this.field.containsKey(neigbour)) {
-                if (this.field.get(neigbour)
+                if (this.getHexagon(neigbour)
                               .peek()
                               .getColour()
                               .equals(opponent)) {
@@ -154,7 +154,7 @@ private boolean hasNeighbours(final Point point) {
      */
     public void put(final GamePiece piece, final Point point) {
         if (this.field.containsKey(point)) {
-            this.field.get(point).push(piece);
+            this.getHexagon(point).push(piece);
         } else {
             Stack<GamePiece> stack = new Stack<>();
             stack.push(piece);
@@ -176,12 +176,12 @@ private boolean hasNeighbours(final Point point) {
         Point toPoint = new Point(toQ, toR);
 
         try {
-            GamePiece piece = this.field.get(fromPoint).peek();
+            GamePiece piece = this.getHexagon(fromPoint).peek();
             if (!piece.getColour().equals(this.currentPlayer)) {
                 throw new IllegalMove();
             }
-            this.field.get(fromPoint).pop();
-            if (this.field.get(fromPoint).isEmpty()) {
+            this.getHexagon(fromPoint).pop();
+            if (this.getHexagon(fromPoint).isEmpty()) {
                 this.field.remove(fromPoint);
             }
             boolean found = hasNeighbours(toPoint);
@@ -208,7 +208,7 @@ private boolean hasNeighbours(final Point point) {
     @Override
     public boolean isWinner(final Player player) {
         for (Point coordinate : this.field.keySet()) {
-            GamePiece piece = this.field.get(coordinate).peek();
+            GamePiece piece = this.getHexagon(coordinate).peek();
             if (piece.getTile().equals(Tile.QUEEN_BEE)
             && piece.getColour().equals(getOpponent(player))) {
                 Point[] neigbours = this.getNeigbours(coordinate);
@@ -234,7 +234,7 @@ private boolean hasNeighbours(final Point point) {
         boolean black = false;
         boolean white = false;
         for (Point coordinate : this.field.keySet()) {
-            GamePiece piece = this.field.get(coordinate).peek();
+            GamePiece piece = this.getHexagon(coordinate).peek();
             if (piece.getColour().equals(Player.BLACK)) {
                 black = true;
             } else {
@@ -327,7 +327,7 @@ private boolean hasNeighbours(final Point point) {
      */
     public int getHeight(final Point point) {
         if (this.field.containsKey(point)) {
-            return this.field.get(point).size();
+            return this.getHexagon(point).size();
         } else {
             return 0;
         }
