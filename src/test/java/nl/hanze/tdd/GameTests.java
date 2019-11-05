@@ -362,5 +362,22 @@ class GameTests {
         });
     }
 
+    @Test
+    void whenConnectedThenLegalMove() {
+        game.put(new GamePiece(Player.WHITE, Tile.BEETLE), new Point(-1, -1));
+        game.put(new GamePiece(Player.WHITE, Tile.BEETLE), new Point(1, -1));
+        game.put(new GamePiece(Player.BLACK, Tile.SPIDER), new Point(0, -2));
+        game.put(new GamePiece(Player.WHITE, Tile.SPIDER), new Point(1, -2));
+        try {
+            game.play(Tile.QUEEN_BEE, 0, 0);
+            game.pass();
+            game.push(new Point(0, 0), new Point(0, -1));
+        } catch (IllegalMove e) {
+            fail(e);
+        }
+        assertEquals(new GamePiece(Player.WHITE, Tile.QUEEN_BEE),
+                    game.getHexagon(new Point(0, -1)).peek());
+    }
+
 
 }

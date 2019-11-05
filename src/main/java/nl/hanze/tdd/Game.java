@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import nl.hanze.hive.Hive;
-
 import static java.lang.Math.min;
 
 /**
@@ -108,19 +107,8 @@ class Game implements Hive {
                 throw new IllegalMove();
             }
         }
-
-        if (bothPlayersPlayed()) {
-            Player opponent = getOpponent(this.currentPlayer);
-            for (Point neigbour : this.getNeigbours(point)) {
-                if (this.field.containsKey(neigbour)) {
-                    if (this.field.get(neigbour)
-                                  .peek()
-                                  .getColour()
-                                  .equals(opponent)) {
-                        throw new IllegalMove();
-                    }
-                }
-            }
+        if (bothPlayersPlayed() && hasClashingNeigbours(point)) {
+                throw new IllegalMove();
         }
         this.pieces.remove(piece);
         this.put(piece, point);
@@ -139,6 +127,26 @@ private boolean hasNeighbours(final Point point) {
     }
     return found;
 }
+    /**
+     * Check if there are any neighbours of the opposing colour.
+     * @param point the point that has it's neigbours checked
+     * @return wether there are any neigbours of an opposing colour
+     */
+    private boolean hasClashingNeigbours(final Point point) {
+        Player opponent = getOpponent(this.currentPlayer);
+        for (Point neigbour : this.getNeigbours(point)) {
+            if (this.field.containsKey(neigbour)) {
+                if (this.field.get(neigbour)
+                              .peek()
+                              .getColour()
+                              .equals(opponent)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     /**
      * Put a piece on the board at the location of point.
      * @param piece the piece to place
@@ -183,9 +191,7 @@ private boolean hasNeighbours(final Point point) {
                 throw new IllegalMove();
             }
             this.put(piece, toPoint);
-        } catch (EmptyStackException e) {
-            throw new IllegalMove();
-        } catch (NullPointerException e) {
+        } catch (EmptyStackException | NullPointerException e) {
             throw new IllegalMove();
         }
 
@@ -272,32 +278,32 @@ private boolean hasNeighbours(final Point point) {
      * @return boolean indicating wether the push can be done.
      */
     private boolean canPush(final Point from, final Point to) {
-        Set<Point> sharedNeighbours = new HashSet<>();
-        Set<Point> fromNeighbours = new HashSet<>();
+        Set<Point> toNeighbours = getOccupiedNeigbours(to);
+        Set<Point> fromNeighbours = getOccupiedNeigbours(from);
+        fromNeighbours.retainAll(toNeighbours);
 
-        for (Point neighbour : this.getNeigbours(from)) {
-            if (this.field.containsKey(neighbour)) {
-                fromNeighbours.add(neighbour);
-            }
-        }
-        for (Point neighbour : this.getNeigbours(to)) {
-            if (this.field.containsKey(neighbour)) {
-                if (fromNeighbours.contains(neighbour)) {
-                    sharedNeighbours.add(neighbour);
-                }
-            }
-        }
-        if (sharedNeighbours.size() == 1) {
+        if (fromNeighbours.size() == 1) {
             return true;
         }
-        if (sharedNeighbours.size() == 0) {
+        if (fromNeighbours.size() == 0) {
             return false;
         }
-        int minimum = sharedNeighbours.stream()
+        int minimum = fromNeighbours.stream()
                                       .map(this::getHeight)
                                       .min(Integer::compare)
                                       .get();
         return minimum <= min(this.getHeight(from) - 1, this.getHeight(to));
+    }
+
+    private Set<Point> getOccupiedNeigbours(final Point point) {
+        Set<Point> occupiedNeighbours = new HashSet<>();
+        Point[] neigbours = this.getNeigbours(point);
+        for (Point neighbour: neigbours) {
+            if (this.field.containsKey(neighbour)) {
+                occupiedNeighbours.add(neighbour);
+            }
+        }
+        return occupiedNeighbours;
     }
 
     /**
