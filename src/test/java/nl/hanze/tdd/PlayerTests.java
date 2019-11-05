@@ -11,17 +11,17 @@ class PlayerTests {
         Hive.Player colour = Hive.Player.WHITE;
         Player player = new Player(colour);
         GamePiece[] pieces = {
-            new GamePiece(colour, Hive.Tile.QUEEN_BEE),
-            new GamePiece(colour, Hive.Tile.BEETLE),
-            new GamePiece(colour, Hive.Tile.BEETLE),
-            new GamePiece(colour, Hive.Tile.SPIDER),
-            new GamePiece(colour, Hive.Tile.SPIDER),
-            new GamePiece(colour, Hive.Tile.GRASSHOPPER),
-            new GamePiece(colour, Hive.Tile.GRASSHOPPER),
-            new GamePiece(colour, Hive.Tile.GRASSHOPPER),
-            new GamePiece(colour, Hive.Tile.SOLDIER_ANT),
-            new GamePiece(colour, Hive.Tile.SOLDIER_ANT),
-            new GamePiece(colour, Hive.Tile.SOLDIER_ANT),
+            new QueenBee(colour),
+            new Beetle(colour),
+            new Beetle(colour),
+            new Spider(colour),
+            new Spider(colour),
+            new Grasshopper(colour),
+            new Grasshopper(colour),
+            new Grasshopper(colour),
+            new SoldierAnt(colour),
+            new SoldierAnt(colour),
+            new SoldierAnt(colour),
         };
 
         assertArrayEquals(pieces, player.getPieces());
@@ -29,17 +29,17 @@ class PlayerTests {
         colour = Hive.Player.BLACK;
         player = new Player(colour);
         GamePiece[] piecesBlack = {
-            new GamePiece(colour, Hive.Tile.QUEEN_BEE),
-                new GamePiece(colour, Hive.Tile.BEETLE),
-                new GamePiece(colour, Hive.Tile.BEETLE),
-                new GamePiece(colour, Hive.Tile.SPIDER),
-                new GamePiece(colour, Hive.Tile.SPIDER),
-                new GamePiece(colour, Hive.Tile.GRASSHOPPER),
-                new GamePiece(colour, Hive.Tile.GRASSHOPPER),
-                new GamePiece(colour, Hive.Tile.GRASSHOPPER),
-                new GamePiece(colour, Hive.Tile.SOLDIER_ANT),
-                new GamePiece(colour, Hive.Tile.SOLDIER_ANT),
-                new GamePiece(colour, Hive.Tile.SOLDIER_ANT),
+            new QueenBee(colour),
+            new Beetle(colour),
+            new Beetle(colour),
+            new Spider(colour),
+            new Spider(colour),
+            new Grasshopper(colour),
+            new Grasshopper(colour),
+            new Grasshopper(colour),
+            new SoldierAnt(colour),
+            new SoldierAnt(colour),
+            new SoldierAnt(colour),
             };
 
         assertArrayEquals(piecesBlack, player.getPieces());

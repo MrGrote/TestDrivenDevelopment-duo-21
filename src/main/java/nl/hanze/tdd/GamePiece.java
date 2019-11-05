@@ -3,7 +3,7 @@ import nl.hanze.hive.Hive.Player;
 import nl.hanze.hive.Hive.Tile;
 
 /** A class representing a Hive gamepiece. */
-class GamePiece {
+public abstract class GamePiece {
     /** The player that own the piece. */
     private Player colour;
     /** The symbol on the piece. */
@@ -12,11 +12,9 @@ class GamePiece {
     /**
      * Create a GamePiece with a given colour and symbol.
      * @param colour the colour of the piece
-     * @param tile the symbol on the piece
      */
-    GamePiece(final Player colour, final Tile tile) {
+    public GamePiece(final Player colour) {
         this.colour = colour;
-        this.tile = tile;
     }
 
     /**
@@ -33,6 +31,14 @@ class GamePiece {
      */
     public Tile getTile() {
         return this.tile;
+    }
+
+    /**
+     * Set the tile.
+     * @param tile the tile to set.
+     */
+    public void setTile(final Tile tile) {
+        this.tile = tile;
     }
 
     /**

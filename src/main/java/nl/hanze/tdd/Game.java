@@ -93,7 +93,28 @@ class Game implements Hive {
         final Tile tile,
         final int q,
         final int r) throws IllegalMove {
-        GamePiece piece = new GamePiece(this.currentPlayer, tile);
+
+        GamePiece piece;
+        switch (tile) {
+            case BEETLE:
+                piece = new Beetle(this.currentPlayer);
+                break;
+            case GRASSHOPPER:
+                piece = new Grasshopper(this.currentPlayer);
+                break;
+            case QUEEN_BEE:
+                piece = new QueenBee(this.currentPlayer);
+                break;
+            case SPIDER:
+                piece = new Spider(this.currentPlayer);
+                break;
+            case SOLDIER_ANT:
+                piece = new SoldierAnt(this.currentPlayer);
+                break;
+            default:
+                throw new IllegalMove();
+        }
+
         Point point = new Point(q, r);
         if (!this.pieces.contains(piece)) {
             throw new IllegalMove();
@@ -168,8 +189,7 @@ private boolean hasNeighbours(final Point point) {
                      final int toQ,
                      final int toR) throws IllegalMove {
         if (this.pieces.contains(
-            new GamePiece(this.currentPlayer, Tile.QUEEN_BEE)
-            )) {
+            new QueenBee(this.currentPlayer))) {
             throw new IllegalMove();
         }
         Point fromPoint = new Point(fromQ, fromR);
