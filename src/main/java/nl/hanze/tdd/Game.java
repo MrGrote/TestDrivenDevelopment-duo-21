@@ -102,20 +102,13 @@ class Game implements Hive {
         if (!(this.field.get(point) == null)) {
             throw new IllegalMove();
         }
+
         if (!this.isEmpty()) {
-            boolean found = false;
-            Point[] neighbours = this.getNeigbours(point);
-            for (Point neighbour : neighbours) {
-                if (this.field.containsKey(neighbour)) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
+            if (!this.hasNeighbours(point)) {
                 throw new IllegalMove();
             }
-
         }
+
         if (bothPlayersPlayed()) {
             Player opponent = getOpponent(this.currentPlayer);
             for (Point neigbour : this.getNeigbours(point)) {
@@ -135,13 +128,24 @@ class Game implements Hive {
         this.currentPlayer = getOpponent(this.currentPlayer);
     }
 
+private boolean hasNeighbours(final Point point) {
+    boolean found = false;
+    Point[] neighbours = this.getNeigbours(point);
+    for (Point neighbour : neighbours) {
+        if (this.field.containsKey(neighbour)) {
+            found = true;
+            break;
+        }
+    }
+    return found;
+}
     /**
      * Put a piece on the board at the location of point.
      * @param piece the piece to place
      * @param point the location to place the piece at
      */
     public void put(final GamePiece piece, final Point point) {
-        if (this.field.keySet().contains(point)) {
+        if (this.field.containsKey(point)) {
             this.field.get(point).push(piece);
         } else {
             Stack<GamePiece> stack = new Stack<>();
@@ -160,29 +164,25 @@ class Game implements Hive {
             )) {
             throw new IllegalMove();
         }
-        Point point = new Point(fromQ, fromR);
+        Point fromPoint = new Point(fromQ, fromR);
+        Point toPoint = new Point(toQ, toR);
+
         try {
-            GamePiece piece = this.field.get(point).peek();
+            GamePiece piece = this.field.get(fromPoint).peek();
             if (!piece.getColour().equals(this.currentPlayer)) {
                 throw new IllegalMove();
             }
-            this.field.get(point).pop();
-            if (this.field.get(point).isEmpty()) {
-                this.field.remove(point);
+            this.field.get(fromPoint).pop();
+            if (this.field.get(fromPoint).isEmpty()) {
+                this.field.remove(fromPoint);
             }
-            boolean found = false;
-            Point[] neighbours = this.getNeigbours(new Point(toQ, toR));
-            for (Point neighbour : neighbours) {
-                if (this.field.containsKey(neighbour)) {
-                    found = true;
-                    break;
-                }
-            }
+            boolean found = hasNeighbours(toPoint);
+
             if (!found) {
-                this.put(piece, point);
+                this.put(piece, fromPoint);
                 throw new IllegalMove();
             }
-            this.put(piece, new Point(toQ, toR));
+            this.put(piece, toPoint);
         } catch (EmptyStackException e) {
             throw new IllegalMove();
         } catch (NullPointerException e) {
