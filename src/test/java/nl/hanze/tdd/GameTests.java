@@ -17,7 +17,9 @@ import java.awt.Point;
 
 class GameTests {
 
-    /** A game object for use in the tests. */
+    /**
+     * A game object for use in the tests.
+     */
     private Game game;
 
 
@@ -26,38 +28,6 @@ class GameTests {
         game = new Game();
     }
 
-    @Test
-    void whenGetNeighboursThenLengthSix() {
-        Point[] neigbours = game.getNeigbours(new Point());
-        assertEquals(6, neigbours.length);
-    }
-
-    @Test
-    void whenGetNeigboursThenCorrectNeighbours() {
-        Point[] neigbours = game.getNeigbours(new Point());
-        Point[] knownNeigbours = {
-            new Point(0, -1),
-            new Point(-1, 0),
-            new Point(-1, 1),
-            new Point(1, -1),
-            new Point(1, 0),
-            new Point(0, 1)
-        };
-        outside:
-        for (Point knownNeigbour : knownNeigbours) {
-            for (Point neigbour : neigbours) {
-                if (neigbour.equals(knownNeigbour)) {
-                    continue outside;
-                }
-            }
-            fail("Couldn't find known neibour in neigbours");
-        }
-    }
-
-    @Test
-    void whenNewBoardThenEmpty() {
-        assertTrue(game.isEmpty());
-    }
 
     @Test
     void whenNewGameThenWhiteActive() {
@@ -71,13 +41,12 @@ class GameTests {
             game.play(Tile.QUEEN_BEE, 0, 0);
             game.play(Tile.QUEEN_BEE, 1, 0);
             game.move(0, 0, 0, 1);
-            assertEquals(Player.BLACK,
-                game.getCurrentPlayer());
+            assertEquals(Player.BLACK, game.getCurrentPlayer());
             game.put(new Grasshopper(Player.WHITE),
-                new Point(2, -1));
+                    new Point(2, -1));
             game.move(1, 0, 1, -1);
             assertEquals(Player.WHITE,
-                game.getCurrentPlayer());
+                    game.getCurrentPlayer());
         } catch (IllegalMove e) {
             fail(e);
         }
@@ -168,7 +137,7 @@ class GameTests {
         game.put(new Beetle(Player.BLACK), new Point(-1, 1));
         game.put(new Beetle(Player.BLACK), new Point(1, -1));
         game.put(new Beetle(Player.BLACK), new Point(1, 0));
-        game.put(new Grasshopper(Player.BLACK),      new Point(0, 1));
+        game.put(new Grasshopper(Player.BLACK), new Point(0, 1));
         assertFalse(game.isWinner(Player.WHITE));
     }
 
@@ -247,10 +216,10 @@ class GameTests {
             fail(e);
         }
         assertThrows(NullPointerException.class, () -> {
-            game.getHexagon(new Point(0, 0)).peek();
+            game.getCurrentBoard().getHexagon(new Point(0, 0)).peek();
         });
         assertEquals(new QueenBee(Player.WHITE),
-            game.getHexagon(new Point(0, 1)).peek());
+                game.getCurrentBoard().getHexagon(new Point(0, 1)).peek());
     }
 
     @Test
@@ -286,32 +255,16 @@ class GameTests {
         });
     }
 
-    @Test
-    void givenSeperatedHivewWhenIsValidStateThenNotVailidState() {
-        game.put(new QueenBee(Player.BLACK), new Point(0, -3));
-        game.put(new QueenBee(Player.BLACK), new Point(0, -1));
-        game.put(new QueenBee(Player.BLACK), new Point(0, 0));
-
-        assertFalse(game.isValidState());
-    }
-
-    @Test
-    void givenNotSeperatedHivewWhenIsValidStateThenVailidState() {
-        game.put(new QueenBee(Player.BLACK), new Point(0, -1));
-        game.put(new QueenBee(Player.BLACK), new Point(0, 0));
-
-        assertTrue(game.isValidState());
-    }
 
     @Test
     void givenEmptyHexWhenGetHeightThenReturn0() {
-        assertEquals(0, game.getHeight(new Point(0, 0)));
+        assertEquals(0, game.getCurrentBoard().getHeight(new Point(0, 0)));
     }
 
     @Test
     void given1StoneWhenGetHeightThenReturn1() {
         game.put(new QueenBee(Player.WHITE), new Point(0, 0));
-        assertEquals(1, game.getHeight(new Point(0, 0)));
+        assertEquals(1, game.getCurrentBoard().getHeight(new Point(0, 0)));
     }
 
     @Test
@@ -338,7 +291,7 @@ class GameTests {
             fail(e);
         }
         assertEquals(new QueenBee(Player.BLACK),
-            game.getHexagon(new Point(-1, 0)).peek());
+                game.getCurrentBoard().getHexagon(new Point(-1, 0)).peek());
     }
 
     @Test
@@ -372,7 +325,27 @@ class GameTests {
             fail(e);
         }
         assertEquals(new QueenBee(Player.WHITE),
-                    game.getHexagon(new Point(0, -1)).peek());
+                game.getCurrentBoard().getHexagon(new Point(0, -1)).peek());
+    }
+
+
+    @Test
+    void givenThreeNonQueenBeeStonesPlayedWhenPlayQueenBeeThenQueenBeeIsPlayed() {
+        try {
+            game.play(Tile.SPIDER, 0, 0);
+            game.play(Tile.GRASSHOPPER, 0, 1);
+            game.play(Tile.GRASSHOPPER, 0, -1);
+            game.play(Tile.QUEEN_BEE, 0, 2);
+            game.play(Tile.BEETLE, 0, -2);
+            game.play(Tile.BEETLE, 0, 3);
+            game.play(Tile.QUEEN_BEE, 0, -3);
+
+        } catch (IllegalMove e) {
+            fail(e);
+        }
+        assertEquals(new QueenBee(Player.WHITE),
+                game.getCurrentBoard().getHexagon(new Point(0, -3)).peek());
+
     }
 
 

@@ -4,10 +4,8 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EmptyStackException;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import nl.hanze.hive.Hive;
@@ -19,10 +17,10 @@ import static java.lang.Math.min;
 class Game implements Hive {
     /** A List of pieces that can still be placed. */
     private List<GamePiece> pieces = new ArrayList<>();
-    /** A Map of points and stacks of gamepiees representing the board. */
-    private Map<Point, Stack<GamePiece>> field = new HashMap<>();
     /** The player whose turn it is. */
     private Player currentPlayer = Player.WHITE;
+    /** Declaring the board.*/
+    private Board field;
 
     /**
      * Create a game.
@@ -32,30 +30,7 @@ class Game implements Hive {
             Arrays.asList(new nl.hanze.tdd.Player(Player.WHITE).getPieces()));
         this.pieces.addAll(
             Arrays.asList(new nl.hanze.tdd.Player(Player.BLACK).getPieces()));
-    }
-
-    /**
-     * Gets all the neighbours of point p.
-     * @param p The point of which to get the neighbours
-     * @return The neighbours of Point p
-     */
-    public Point[] getNeigbours(final Point p) {
-        return new Point[] {
-            new Point(p.x, p.y - 1),
-            new Point(p.x - 1, p.y),
-            new Point(p.x - 1, p.y + 1),
-            new Point(p.x + 1, p.y - 1),
-            new Point(p.x + 1, p.y),
-            new Point(p.x, p.y + 1)
-        };
-    }
-
-    /**
-     * Check wether there are any pieces on the board.
-     * @return a boolean indicating wether the field is empty
-     */
-    public boolean isEmpty() {
-        return this.field.isEmpty();
+        this.field = new Board();
     }
 
     /**
@@ -67,11 +42,18 @@ class Game implements Hive {
     }
 
     /**
+     * Get the current board.
+     * @return the current board.
+     */
+    public Board getCurrentBoard() {
+        return this.field; }
+
+    /**
      * Get the opponent of the player.
      * @param player the player whose opponent to find
      * @return the opponent of player
      */
-    private Player getOpponent(final Player player) {
+    static Player getOpponent(final Player player) {
         if (player == Player.WHITE) {
             return Player.BLACK;
         } else {
@@ -80,12 +62,24 @@ class Game implements Hive {
     }
 
     /**
-     * Get the stack of gamepieces at location point.
-     * @param point the location
-     * @return the stack at location point
+     * check if the queen is played or not.
+     * @return wether or not the queen is played
      */
-    public Stack<GamePiece> getHexagon(final Point point) {
-        return this.field.get(point);
+    public boolean queenPlayed() {
+        return !this.pieces.contains(new QueenBee(this.currentPlayer));
+    }
+
+    /**
+     * get amount of pieces played by the current player.
+     * @return the amount of pieces played
+     */
+    private int amountPlayed() {
+        int temp = (int) this.pieces.stream()
+                .map(GamePiece::getColour)
+                .filter((colour) -> colour.equals(this.currentPlayer))
+                .count();
+        int totalPieces = 11;
+        return totalPieces - temp;
     }
 
     @Override
@@ -93,7 +87,10 @@ class Game implements Hive {
         final Tile tile,
         final int q,
         final int r) throws IllegalMove {
-
+        int maxPLayedBeforeQueen = 3;
+        if (tile != Tile.QUEEN_BEE && !queenPlayed() && amountPlayed() >= maxPLayedBeforeQueen) {
+            throw new IllegalMove();
+        }
         GamePiece piece;
         switch (tile) {
             case BEETLE:
@@ -119,16 +116,17 @@ class Game implements Hive {
         if (!this.pieces.contains(piece)) {
             throw new IllegalMove();
         }
-        if (!(this.getHexagon(point) == null)) {
+        if (!(this.field.getHexagon(point) == null)) {
             throw new IllegalMove();
         }
 
-        if (!this.isEmpty()) {
-            if (!this.hasNeighbours(point)) {
+        if (!this.field.isEmpty()) {
+            if (!this.field.hasNeighbours(point)) {
                 throw new IllegalMove();
             }
         }
-        if (bothPlayersPlayed() && hasClashingNeigbours(point)) {
+        if (bothPlayersPlayed() && this.field
+                .hasClashingNeighbours(point, this.currentPlayer)) {
                 throw new IllegalMove();
         }
         this.pieces.remove(piece);
@@ -137,36 +135,7 @@ class Game implements Hive {
         this.currentPlayer = getOpponent(this.currentPlayer);
     }
 
-private boolean hasNeighbours(final Point point) {
-    boolean found = false;
-    Point[] neighbours = this.getNeigbours(point);
-    for (Point neighbour : neighbours) {
-        if (this.field.containsKey(neighbour)) {
-            found = true;
-            break;
-        }
-    }
-    return found;
-}
-    /**
-     * Check if there are any neighbours of the opposing colour.
-     * @param point the point that has it's neigbours checked
-     * @return wether there are any neigbours of an opposing colour
-     */
-    private boolean hasClashingNeigbours(final Point point) {
-        Player opponent = getOpponent(this.currentPlayer);
-        for (Point neigbour : this.getNeigbours(point)) {
-            if (this.field.containsKey(neigbour)) {
-                if (this.getHexagon(neigbour)
-                              .peek()
-                              .getColour()
-                              .equals(opponent)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+
 
     /**
      * Put a piece on the board at the location of point.
@@ -175,7 +144,7 @@ private boolean hasNeighbours(final Point point) {
      */
     public void put(final GamePiece piece, final Point point) {
         if (this.field.containsKey(point)) {
-            this.getHexagon(point).push(piece);
+            this.field.getHexagon(point).push(piece);
         } else {
             Stack<GamePiece> stack = new Stack<>();
             stack.push(piece);
@@ -188,23 +157,22 @@ private boolean hasNeighbours(final Point point) {
                      final int fromR,
                      final int toQ,
                      final int toR) throws IllegalMove {
-        if (this.pieces.contains(
-            new QueenBee(this.currentPlayer))) {
-            throw new IllegalMove();
-        }
+
         Point fromPoint = new Point(fromQ, fromR);
         Point toPoint = new Point(toQ, toR);
-
+        if (!queenPlayed()) {
+            throw new IllegalMove();
+        }
         try {
-            GamePiece piece = this.getHexagon(fromPoint).peek();
+            GamePiece piece = this.field.getHexagon(fromPoint).peek();
             if (!piece.getColour().equals(this.currentPlayer)) {
                 throw new IllegalMove();
             }
-            this.getHexagon(fromPoint).pop();
-            if (this.getHexagon(fromPoint).isEmpty()) {
+            this.field.getHexagon(fromPoint).pop();
+            if (this.field.getHexagon(fromPoint).isEmpty()) {
                 this.field.remove(fromPoint);
             }
-            boolean found = hasNeighbours(toPoint);
+            boolean found = this.field.hasNeighbours(toPoint);
 
             if (!found) {
                 this.put(piece, fromPoint);
@@ -228,13 +196,11 @@ private boolean hasNeighbours(final Point point) {
     @Override
     public boolean isWinner(final Player player) {
         for (Point coordinate : this.field.keySet()) {
-            GamePiece piece = this.getHexagon(coordinate).peek();
+            GamePiece piece = this.field.getHexagon(coordinate).peek();
             if (piece.getTile().equals(Tile.QUEEN_BEE)
             && piece.getColour().equals(getOpponent(player))) {
-                Point[] neigbours = this.getNeigbours(coordinate);
-                return this.field
-                           .keySet()
-                           .containsAll(Arrays.asList(neigbours));
+                Point[] neighbours = this.field.getNeigbours(coordinate);
+                return this.field.allNeighboursInKeyset(neighbours);
             }
         }
         return false;
@@ -243,7 +209,7 @@ private boolean hasNeighbours(final Point point) {
     @Override
     public boolean isDraw() {
         return this.isWinner(this.currentPlayer)
-            && this.isWinner(this.getOpponent(this.currentPlayer));
+            && this.isWinner(getOpponent(this.currentPlayer));
     }
 
     /**
@@ -254,7 +220,7 @@ private boolean hasNeighbours(final Point point) {
         boolean black = false;
         boolean white = false;
         for (Point coordinate : this.field.keySet()) {
-            GamePiece piece = this.getHexagon(coordinate).peek();
+            GamePiece piece = this.field.getHexagon(coordinate).peek();
             if (piece.getColour().equals(Player.BLACK)) {
                 black = true;
             } else {
@@ -264,32 +230,7 @@ private boolean hasNeighbours(final Point point) {
         return black && white;
     }
 
-    /**
-     * checks wether the board is in a legal state.
-     * @return a boolean indicating wether the board is in a legal state
-     */
-    public boolean isValidState() {
-        Point first = (Point) this.field.keySet().toArray()[0];
-        Set<Point> allPoints = new HashSet<>();
-        Set<Point> newPoints = new HashSet<>();
-        newPoints.add(first);
-        allPoints.add(first);
-        while (!newPoints.isEmpty()) {
-            for (Point point : newPoints.toArray(new Point[0])) {
-                newPoints.remove(point);
-                for (Point neighbour : this.getNeigbours(point)) {
-                    if (this.field.containsKey(neighbour)) {
-                        if (!allPoints.contains(neighbour)) {
-                            newPoints.add(neighbour);
-                            allPoints.add(neighbour);
-                        }
-                    }
-                }
-            }
 
-        }
-        return this.field.keySet().equals(allPoints);
-    }
 
     /**
      * Check wether a stone can be pushed to a certain location.
@@ -309,15 +250,16 @@ private boolean hasNeighbours(final Point point) {
             return false;
         }
         int minimum = fromNeighbours.stream()
-                                      .map(this::getHeight)
+                                      .map(this.field::getHeight)
                                       .min(Integer::compare)
                                       .get();
-        return minimum <= min(this.getHeight(from) - 1, this.getHeight(to));
+        return minimum <= min(this.field.getHeight(from) - 1,
+                this.field.getHeight(to));
     }
 
     private Set<Point> getOccupiedNeigbours(final Point point) {
         Set<Point> occupiedNeighbours = new HashSet<>();
-        Point[] neigbours = this.getNeigbours(point);
+        Point[] neigbours = this.field.getNeigbours(point);
         for (Point neighbour: neigbours) {
             if (this.field.containsKey(neighbour)) {
                 occupiedNeighbours.add(neighbour);
@@ -340,17 +282,6 @@ private boolean hasNeighbours(final Point point) {
         }
     }
 
-    /**
-     * Get the height of a hexagon.
-     * @param point the location of the hexagon
-     * @return the height of the hexagon
-     */
-    public int getHeight(final Point point) {
-        if (this.field.containsKey(point)) {
-            return this.getHexagon(point).size();
-        } else {
-            return 0;
-        }
 
-    }
+
 }
