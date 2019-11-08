@@ -19,6 +19,7 @@ public final class Beetle  implements GamePiece {
     /**
      * Create a new QueenBee.
      * @param colour The colour of the tile.
+     * @param board The board the  beetle is on
      */
     public Beetle(final Player colour, final Board board) {
         this.colour = colour;
@@ -28,7 +29,8 @@ public final class Beetle  implements GamePiece {
     @Override
     public void move(final Point from, final Point to) throws IllegalMove {
         if (!Arrays.asList(this.board.getNeigbours(from)).contains(to)) {
-            throw new IllegalMove("Illegal destination for Beetle at " + from.toString());
+            throw new IllegalMove("Illegal destination for Beetle at "
+                + from.toString());
         }
         //if ()
         this.board.pop(from);
@@ -46,7 +48,7 @@ public final class Beetle  implements GamePiece {
     }
 
     @Override
-    public boolean equals(Object other){
+    public boolean equals(final Object other) {
         if (other instanceof GamePiece) {
             GamePiece otherPiece = (GamePiece) other;
             return this.getColour().equals(otherPiece.getColour())

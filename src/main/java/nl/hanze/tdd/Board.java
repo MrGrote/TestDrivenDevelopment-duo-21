@@ -33,7 +33,12 @@ public class Board {
         };
     }
 
-    public GamePiece pop(Point p) {
+    /**
+     * Remove a gamepiece from the board at point p.
+     * @param p the point where to pop from
+     * @return the piece at that point.
+     */
+    public GamePiece pop(final Point p) {
         GamePiece piece = this.getHexagon(p).pop();
         if (this.getHexagon(p).isEmpty()) {
             this.remove(p);
@@ -143,9 +148,9 @@ public class Board {
     public boolean containsKey(final Point point) {
         return (this.field.containsKey(point));
     }
-    /** Puts a stack in the hashmap.
+    /** Puts a piece in the hashmap.
      * @param point the point on the field
-     * @param stack the stack on that point*/
+     * @param piece the piece to put */
     public void put(final Point point, final GamePiece piece) {
         if (this.containsKey(point)) {
             this.getHexagon(point).push(piece);

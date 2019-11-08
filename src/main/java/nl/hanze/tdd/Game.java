@@ -25,8 +25,10 @@ class Game implements Hive {
      * @param field The board the game is played on.
      */
     Game(final Board field) {
-        this.pieces.put(Player.BLACK, new nl.hanze.tdd.Player(Player.BLACK).getPieces());
-        this.pieces.put(Player.WHITE, new nl.hanze.tdd.Player(Player.WHITE).getPieces());
+        this.pieces.put(Player.BLACK,
+            new nl.hanze.tdd.Player(Player.BLACK).getPieces());
+        this.pieces.put(Player.WHITE,
+            new nl.hanze.tdd.Player(Player.WHITE).getPieces());
         this.field = field;
     }
 
@@ -41,7 +43,7 @@ class Game implements Hive {
 
     /**
      * Get the current board.
-     * 
+     *
      * @return the current board.
      */
     public Board getCurrentBoard() {
@@ -50,7 +52,7 @@ class Game implements Hive {
 
     /**
      * Get the opponent of the player.
-     * 
+     *
      * @param player the player whose opponent to find
      * @return the opponent of player
      */
@@ -58,13 +60,14 @@ class Game implements Hive {
         if (player == Player.WHITE) {
             return Player.BLACK;
         } else {
+
             return Player.WHITE;
         }
     }
 
     /**
      * check if the queen is played or not.
-     * 
+     *
      * @return wether or not the queen is played
      */
     public boolean queenPlayed() {
@@ -73,7 +76,7 @@ class Game implements Hive {
 
     /**
      * get amount of pieces played by the current player.
-     * 
+     *
      * @return the amount of pieces played
      */
     private int amountPlayed() {
@@ -88,9 +91,11 @@ class Game implements Hive {
     }
 
     @Override
-    public void play(final Tile tile, final int q, final int r) throws IllegalMove {
+    public void play(final Tile tile, final int q, final int r)
+    throws IllegalMove {
         int maxPLayedBeforeQueen = 3;
-        if (tile != Tile.QUEEN_BEE && !queenPlayed() && amountPlayed() >= maxPLayedBeforeQueen) {
+        if (tile != Tile.QUEEN_BEE && !queenPlayed()
+            && amountPlayed() >= maxPLayedBeforeQueen) {
             throw new IllegalMove();
         }
         GamePiece piece;
@@ -127,10 +132,12 @@ class Game implements Hive {
                 throw new IllegalMove();
             }
         }
-        if (bothPlayersPlayed() && this.field.hasClashingNeighbours(point, this.currentPlayer)) {
+        if (bothPlayersPlayed()
+            && this.field.hasClashingNeighbours(point, this.currentPlayer)) {
             throw new IllegalMove();
         }
-        this.pieces.remove(piece);
+        this.pieces.get(this.currentPlayer)
+            .put(tile, this.pieces.get(this.currentPlayer).get(tile) - 1);
         this.put(piece, point);
 
         this.currentPlayer = getOpponent(this.currentPlayer);
@@ -138,7 +145,7 @@ class Game implements Hive {
 
     /**
      * Put a piece on the board at the location of point.
-     * 
+     *
      * @param piece the piece to place
      * @param point the location to place the piece at
      */
@@ -147,7 +154,8 @@ class Game implements Hive {
     }
 
     @Override
-    public void move(final int fromQ, final int fromR, final int toQ, final int toR) throws IllegalMove {
+    public void move(final int fromQ, final int fromR,
+        final int toQ, final int toR)throws IllegalMove {
 
         Point fromPoint = new Point(fromQ, fromR);
         Point toPoint = new Point(toQ, toR);
@@ -186,7 +194,8 @@ class Game implements Hive {
     public boolean isWinner(final Player player) {
         for (Point coordinate : this.field.keySet()) {
             GamePiece piece = this.field.getHexagon(coordinate).peek();
-            if (piece.getTile().equals(Tile.QUEEN_BEE) && piece.getColour().equals(getOpponent(player))) {
+            if (piece.getTile().equals(Tile.QUEEN_BEE)
+                && piece.getColour().equals(getOpponent(player))) {
                 Point[] neighbours = this.field.getNeigbours(coordinate);
                 return this.field.allNeighboursInKeyset(neighbours);
             }
@@ -196,12 +205,13 @@ class Game implements Hive {
 
     @Override
     public boolean isDraw() {
-        return this.isWinner(this.currentPlayer) && this.isWinner(getOpponent(this.currentPlayer));
+        return this.isWinner(this.currentPlayer)
+        &&  this.isWinner(getOpponent(this.currentPlayer));
     }
 
     /**
      * Checks wether both players have played a piece.
-     * 
+     *
      * @return true if both players have played a piece, else false
      */
     public boolean bothPlayersPlayed() {
@@ -220,7 +230,7 @@ class Game implements Hive {
 
     /**
      * Check wether a stone can be pushed to a certain location.
-     * 
+     *
      * @param from origin point
      * @param to   destination point
      * @return boolean indicating wether the push can be done.
@@ -237,8 +247,12 @@ class Game implements Hive {
         if (fromNeighbours.size() == 0) {
             return false;
         }
-        int minimum = fromNeighbours.stream().map(this.field::getHeight).min(Integer::compare).get();
-        return minimum <= min(this.field.getHeight(from) - 1, this.field.getHeight(to));
+        int minimum = fromNeighbours.stream()
+                                    .map(this.field::getHeight)
+                                    .min(Integer::compare)
+                                    .get();
+        return minimum <= min(this.field.getHeight(from) - 1,
+            this.field.getHeight(to));
     }
 
     private Set<Point> getOccupiedNeigbours(final Point point) {
@@ -254,7 +268,7 @@ class Game implements Hive {
 
     /**
      * Push stone from origin to destination.
-     * 
+     *
      * @param from origin point
      * @param to   destination point
      * @throws IllegalMove when push obstructed
