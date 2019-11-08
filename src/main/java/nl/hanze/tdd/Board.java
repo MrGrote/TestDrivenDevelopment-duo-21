@@ -33,6 +33,14 @@ public class Board {
         };
     }
 
+    public GamePiece pop(Point p) {
+        GamePiece piece = this.getHexagon(p).pop();
+        if (this.getHexagon(p).isEmpty()) {
+            this.remove(p);
+        }
+        return piece;
+    }
+
     /**
      * Check wether there are any pieces on the board.
      * @return a boolean indicating wether the field is empty
@@ -128,6 +136,7 @@ public class Board {
     public void remove(final Point point) {
         this.field.remove(point);
     }
+
     /** Returns true if the field contains the point.
      * @param point the point on the field
      * @return a boolean indicating if the field contains the point*/
@@ -137,14 +146,21 @@ public class Board {
     /** Puts a stack in the hashmap.
      * @param point the point on the field
      * @param stack the stack on that point*/
-    public void put(final Point point, final Stack<GamePiece> stack) {
-        this.field.put(point, stack);
+    public void put(final Point point, final GamePiece piece) {
+        if (this.containsKey(point)) {
+            this.getHexagon(point).push(piece);
+        } else {
+            Stack<GamePiece> stack = new Stack<>();
+            stack.push(piece);
+            this.field.put(point, stack);
+        }
     }
     /** returns the keyset.
      * @return the keyset*/
     public Iterable<? extends Point> keySet() {
         return this.field.keySet();
     }
+
     /** Returns true if all neighbours are occupied.
      * @param neighbours all the neighbours of a point
      * @return a boolean indicating wether all neighbours are occupied or not*/

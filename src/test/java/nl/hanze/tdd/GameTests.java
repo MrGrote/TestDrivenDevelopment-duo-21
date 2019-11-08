@@ -17,15 +17,13 @@ import java.awt.Point;
 
 class GameTests {
 
-    /**
-     * A game object for use in the tests.
-     */
     private Game game;
-
+    private Board board;
 
     @BeforeEach
     void createGame() {
-        game = new Game();
+        board = new Board();
+        game = new Game(board);
     }
 
 
@@ -41,7 +39,7 @@ class GameTests {
             game.play(Tile.QUEEN_BEE, 1, 0);
             game.move(0, 0, 0, 1);
             assertEquals(Player.BLACK, game.getCurrentPlayer());
-            game.put(new Grasshopper(Player.WHITE),
+            game.put(new Grasshopper(Player.WHITE, board),
                     new Point(2, -1));
             game.move(1, 0, 1, -1);
             assertEquals(Player.WHITE,
@@ -115,40 +113,40 @@ class GameTests {
 
     @Test
     void whenColourQueenSurroundedThenOppositeColourWin() {
-        game.put(new QueenBee(Player.WHITE), new Point(0, 0));
-        game.put(new Grasshopper(Player.BLACK), new Point(0, -1));
-        game.put(new Beetle(Player.BLACK), new Point(-1, 0));
-        game.put(new Beetle(Player.BLACK), new Point(-1, 1));
-        game.put(new Beetle(Player.BLACK), new Point(1, -1));
-        game.put(new Beetle(Player.BLACK), new Point(1, 0));
-        game.put(new Grasshopper(Player.BLACK), new Point(0, 1));
+        game.put(new QueenBee(Player.WHITE, board), new Point(0, 0));
+        game.put(new Grasshopper(Player.BLACK, board), new Point(0, -1));
+        game.put(new SoldierAnt(Player.BLACK, board), new Point(-1, 0));
+        game.put(new SoldierAnt(Player.BLACK, board), new Point(-1, 1));
+        game.put(new SoldierAnt(Player.BLACK, board), new Point(1, -1));
+        game.put(new SoldierAnt(Player.BLACK, board), new Point(1, 0));
+        game.put(new Grasshopper(Player.BLACK, board), new Point(0, 1));
         assertTrue(game.isWinner(Player.BLACK));
     }
 
     @Test
     void whenColourQueenSurroundedThenColourNotWin() {
-        game.put(new QueenBee(Player.WHITE), new Point(0, 0));
-        game.put(new Grasshopper(Player.BLACK), new Point(0, -1));
-        game.put(new Beetle(Player.BLACK), new Point(-1, 0));
-        game.put(new Beetle(Player.BLACK), new Point(-1, 1));
-        game.put(new Beetle(Player.BLACK), new Point(1, -1));
-        game.put(new Beetle(Player.BLACK), new Point(1, 0));
-        game.put(new Grasshopper(Player.BLACK), new Point(0, 1));
+        game.put(new QueenBee(Player.WHITE, board), new Point(0, 0));
+        game.put(new Grasshopper(Player.BLACK, board), new Point(0, -1));
+        game.put(new SoldierAnt(Player.BLACK, board), new Point(-1, 0));
+        game.put(new SoldierAnt(Player.BLACK, board), new Point(-1, 1));
+        game.put(new SoldierAnt(Player.BLACK, board), new Point(1, -1));
+        game.put(new SoldierAnt(Player.BLACK, board), new Point(1, 0));
+        game.put(new Grasshopper(Player.BLACK, board), new Point(0, 1));
         assertFalse(game.isWinner(Player.WHITE));
     }
 
     @Test
     void whenBothQueenSurroundedThenDraw() {
-        game.put(new QueenBee(Player.BLACK), new Point(0, 0));
-        game.put(new QueenBee(Player.WHITE), new Point(0, -1));
-        game.put(new Beetle(Player.BLACK), new Point(-1, 0));
-        game.put(new Beetle(Player.BLACK), new Point(-1, 1));
-        game.put(new Beetle(Player.BLACK), new Point(1, -1));
-        game.put(new Beetle(Player.BLACK), new Point(1, 0));
-        game.put(new Beetle(Player.BLACK), new Point(0, 1));
-        game.put(new Beetle(Player.BLACK), new Point(-1, -1));
-        game.put(new Beetle(Player.BLACK), new Point(0, -2));
-        game.put(new Beetle(Player.BLACK), new Point(1, -2));
+        game.put(new QueenBee(Player.BLACK, board), new Point(0, 0));
+        game.put(new QueenBee(Player.WHITE, board), new Point(0, -1));
+        game.put(new SoldierAnt(Player.BLACK, board), new Point(-1, 0));
+        game.put(new SoldierAnt(Player.BLACK, board), new Point(-1, 1));
+        game.put(new SoldierAnt(Player.BLACK, board), new Point(1, -1));
+        game.put(new SoldierAnt(Player.BLACK, board), new Point(1, 0));
+        game.put(new SoldierAnt(Player.BLACK, board), new Point(0, 1));
+        game.put(new SoldierAnt(Player.BLACK, board), new Point(-1, -1));
+        game.put(new SoldierAnt(Player.BLACK, board), new Point(0, -2));
+        game.put(new SoldierAnt(Player.BLACK, board), new Point(1, -2));
         assertTrue(game.isDraw());
     }
 
@@ -197,30 +195,22 @@ class GameTests {
     }
 
     @Test
-    void givenSpaceOccupiedWhenMoveThenMoved() {
-        try {
-            game.play(Tile.QUEEN_BEE, 0, 0);
-            game.play(Tile.QUEEN_BEE, 1, 0);
-        } catch (IllegalMove e) {
-            fail(e);
-        }
+    void givenSpaceOccupiedWhenMoveThenMoved() throws IllegalMove {
 
-        try {
-            game.move(0, 0, 0, 1);
+        game.play(Tile.QUEEN_BEE, 0, 0);
+        game.play(Tile.QUEEN_BEE, 1, 0);
+        game.move(0, 0, 0, 1);
 
-        } catch (IllegalMove e) {
-            fail(e);
-        }
         assertThrows(NullPointerException.class, () -> {
             game.getCurrentBoard().getHexagon(new Point(0, 0)).peek();
         });
-        assertEquals(new QueenBee(Player.WHITE),
+        assertEquals(new QueenBee(Player.WHITE, board),
                 game.getCurrentBoard().getHexagon(new Point(0, 1)).peek());
     }
 
     @Test
     void whenMoveOpponentPieceThenIllegalMove() {
-        game.put(new QueenBee(Player.BLACK), new Point(0, 0));
+        game.put(new QueenBee(Player.BLACK, board), new Point(0, 0));
         assertThrows(IllegalMove.class, () -> {
             game.move(0, 0, 0, 1);
         });
@@ -259,15 +249,15 @@ class GameTests {
 
     @Test
     void given1StoneWhenGetHeightThenReturn1() {
-        game.put(new QueenBee(Player.WHITE), new Point(0, 0));
+        game.put(new QueenBee(Player.WHITE, board), new Point(0, 0));
         assertEquals(1, game.getCurrentBoard().getHeight(new Point(0, 0)));
     }
 
     @Test
     void whenBlockedPushThenIllegalMove() {
-        game.put(new QueenBee(Player.BLACK), new Point(0, -1));
-        game.put(new QueenBee(Player.BLACK), new Point(0, 0));
-        game.put(new QueenBee(Player.BLACK), new Point(-1, 1));
+        game.put(new QueenBee(Player.BLACK, board), new Point(0, -1));
+        game.put(new QueenBee(Player.BLACK, board), new Point(0, 0));
+        game.put(new QueenBee(Player.BLACK, board), new Point(-1, 1));
 
         assertThrows(IllegalMove.class, () -> {
             game.push(new Point(0, 0), new Point(-1, 0));
@@ -276,7 +266,7 @@ class GameTests {
 
     @Test
     void whenUnblockedPushThenLegalPush() {
-        game.put(new QueenBee(Player.BLACK), new Point(0, -1));
+        game.put(new QueenBee(Player.BLACK, board), new Point(0, -1));
 
         try {
             game.pass();
@@ -286,16 +276,16 @@ class GameTests {
         } catch (IllegalMove e) {
             fail(e);
         }
-        assertEquals(new QueenBee(Player.BLACK),
+        assertEquals(new QueenBee(Player.BLACK, board),
                 game.getCurrentBoard().getHexagon(new Point(-1, 0)).peek());
     }
 
     @Test
     void whenUnconnectedPushThenIllegalMove() {
-        game.put(new Beetle(Player.WHITE), new Point(-1, -1));
-        game.put(new Beetle(Player.WHITE), new Point(1, -1));
-        game.put(new Spider(Player.BLACK), new Point(0, -2));
-        game.put(new Spider(Player.WHITE), new Point(1, -2));
+        game.put(new SoldierAnt(Player.WHITE, board), new Point(-1, -1));
+        game.put(new SoldierAnt(Player.WHITE, board), new Point(1, -1));
+        game.put(new Spider(Player.BLACK, board), new Point(0, -2));
+        game.put(new Spider(Player.WHITE, board), new Point(1, -2));
         try {
             game.play(Tile.QUEEN_BEE, 0, 0);
             game.pass();
@@ -309,10 +299,10 @@ class GameTests {
 
     @Test
     void whenConnectedThenLegalMove() {
-        game.put(new Beetle(Player.WHITE), new Point(-1, -1));
-        game.put(new Beetle(Player.WHITE), new Point(1, -1));
-        game.put(new Spider(Player.BLACK), new Point(0, -2));
-        game.put(new Spider(Player.WHITE), new Point(1, -2));
+        game.put(new SoldierAnt(Player.WHITE, board), new Point(-1, -1));
+        game.put(new SoldierAnt(Player.WHITE, board), new Point(1, -1));
+        game.put(new Spider(Player.BLACK, board), new Point(0, -2));
+        game.put(new Spider(Player.WHITE, board), new Point(1, -2));
         try {
             game.play(Tile.QUEEN_BEE, 0, 0);
             game.pass();
@@ -320,7 +310,7 @@ class GameTests {
         } catch (IllegalMove e) {
             fail(e);
         }
-        assertEquals(new QueenBee(Player.WHITE),
+        assertEquals(new QueenBee(Player.WHITE, board),
                 game.getCurrentBoard().getHexagon(new Point(0, -1)).peek());
     }
 
@@ -339,7 +329,7 @@ class GameTests {
         } catch (IllegalMove e) {
             fail(e);
         }
-        assertEquals(new QueenBee(Player.WHITE),
+        assertEquals(new QueenBee(Player.WHITE, board),
                 game.getCurrentBoard().getHexagon(new Point(0, -3)).peek());
 
     }
