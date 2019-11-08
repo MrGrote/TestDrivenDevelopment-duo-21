@@ -32,9 +32,10 @@ public final class Beetle  implements GamePiece {
             throw new IllegalMove("Illegal destination for Beetle at "
                 + from.toString());
         }
-        //if ()
-        this.board.pop(from);
-        this.board.put(to, this);
+        if (this.board.canPush(from, to)){
+            this.board.put(to, this);
+        }
+
     }
 
     @Override

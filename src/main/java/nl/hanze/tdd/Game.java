@@ -101,7 +101,7 @@ class Game implements Hive {
         GamePiece piece;
         switch (tile) {
         case BEETLE:
-            piece = new SoldierAnt(this.currentPlayer, this.field);
+            piece = new Beetle(this.currentPlayer, this.field);
             break;
         case GRASSHOPPER:
             piece = new Grasshopper(this.currentPlayer, this.field);
@@ -175,7 +175,7 @@ class Game implements Hive {
                 this.put(piece, fromPoint);
                 throw new IllegalMove();
             }
-            this.put(piece, toPoint);
+            piece.move(fromPoint, toPoint);
         } catch (EmptyStackException | NullPointerException e) {
             throw new IllegalMove();
         }
@@ -228,43 +228,7 @@ class Game implements Hive {
         return black && white;
     }
 
-    /**
-     * Check wether a stone can be pushed to a certain location.
-     *
-     * @param from origin point
-     * @param to   destination point
-     * @return boolean indicating wether the push can be done.
-     */
-    private boolean canPush(final Point from, final Point to) {
-        System.out.println("HIIIIIIIIII");
-        Set<Point> toNeighbours = getOccupiedNeigbours(to);
-        Set<Point> fromNeighbours = getOccupiedNeigbours(from);
-        fromNeighbours.retainAll(toNeighbours);
 
-        if (fromNeighbours.size() == 1) {
-            return true;
-        }
-        if (fromNeighbours.size() == 0) {
-            return false;
-        }
-        int minimum = fromNeighbours.stream()
-                                    .map(this.field::getHeight)
-                                    .min(Integer::compare)
-                                    .get();
-        return minimum <= min(this.field.getHeight(from) - 1,
-            this.field.getHeight(to));
-    }
-
-    private Set<Point> getOccupiedNeigbours(final Point point) {
-        Set<Point> occupiedNeighbours = new HashSet<>();
-        Point[] neigbours = this.field.getNeigbours(point);
-        for (Point neighbour : neigbours) {
-            if (this.field.containsKey(neighbour)) {
-                occupiedNeighbours.add(neighbour);
-            }
-        }
-        return occupiedNeighbours;
-    }
 
     /**
      * Push stone from origin to destination.
@@ -274,7 +238,7 @@ class Game implements Hive {
      * @throws IllegalMove when push obstructed
      */
     public void push(final Point from, final Point to) throws IllegalMove {
-        if (canPush(from, to)) {
+        if (this.field.canPush(from, to)) {
             move(from.x, from.y, to.x, to.y);
         } else {
             throw new IllegalMove();

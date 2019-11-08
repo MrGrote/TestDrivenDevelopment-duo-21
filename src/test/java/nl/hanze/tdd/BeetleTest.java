@@ -32,7 +32,7 @@ public class BeetleTest {
         } catch (IllegalMove e){
             fail(e);
         }
-        assertEquals(new SoldierAnt(Player.WHITE, board),
+        assertEquals(new Beetle(Player.WHITE, game.getCurrentBoard()),
                 game.getCurrentBoard().getHexagon(new Point(1, -1)).peek());
 
 
@@ -50,5 +50,21 @@ public class BeetleTest {
         assertThrows(IllegalMove.class, () -> {
             game.move(0, -1, 1, 0);
         });
+    }
+
+    @Test
+    void givenBeetleWhenMoveBeetleOntoOtherStoneThenBeetleMoved () {
+        game.put(new Beetle(Player.WHITE, game.getCurrentBoard()), new Point(0, -1));
+        try {
+            game.play(Tile.QUEEN_BEE, 0, 0);
+            game.play(Tile.QUEEN_BEE, 1, -1);
+            game.pass();
+            game.play(Tile.BEETLE, 2, -1);
+
+            game.move(0, -1, 1, -1);
+
+        } catch (IllegalMove e){
+            fail(e);
+        }
     }
 }

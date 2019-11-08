@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Arrays;
 
+import static java.lang.Math.min;
+
 public class Board {
     /** A Map of points and stacks of gamepiees representing the board. */
     private Map<Point, Stack<GamePiece>> field;
@@ -173,5 +175,42 @@ public class Board {
         return this.field
                 .keySet()
                 .containsAll(Arrays.asList(neighbours));
+    }
+
+    /**
+     * Check wether a stone can be pushed to a certain location.
+     *
+     * @param from origin point
+     * @param to   destination point
+     * @return boolean indicating wether the push can be done.
+     */
+    public boolean canPush(final Point from, final Point to) {
+        Set<Point> toNeighbours = getOccupiedNeigbours(to);
+        Set<Point> fromNeighbours = getOccupiedNeigbours(from);
+        fromNeighbours.retainAll(toNeighbours);
+
+        if (fromNeighbours.size() == 1) {
+            return true;
+        }
+        if (fromNeighbours.size() == 0) {
+            return false;
+        }
+        int minimum = fromNeighbours.stream()
+                .map(this::getHeight)
+                .min(Integer::compare)
+                .get();
+        return minimum <= min(this.getHeight(from) - 1,
+                this.getHeight(to));
+    }
+
+    public Set<Point> getOccupiedNeigbours(final Point point) {
+        Set<Point> occupiedNeighbours = new HashSet<>();
+        Point[] neigbours = this.getNeigbours(point);
+        for (Point neighbour : neigbours) {
+            if (this.field.containsKey(neighbour)) {
+                occupiedNeighbours.add(neighbour);
+            }
+        }
+        return occupiedNeighbours;
     }
 }

@@ -28,13 +28,13 @@ public final class QueenBee  implements GamePiece {
 
     @Override
     public void move(final Point from, final Point to) throws IllegalMove {
-        if (!Arrays.asList(this.board.getNeigbours(from)).contains(to)) {
+        if (!Arrays.asList(this.board.getNeigbours(from)).contains(to) || this.board.getHexagon(to) != null) {
             throw new IllegalMove("Illegal destination for Beetle at "
                 + from.toString());
         }
-        //if ()
-        this.board.pop(from);
-        this.board.put(to, this);
+        if (this.board.canPush(from, to)) {
+            this.board.put(to, this);
+        }
     }
 
     @Override
