@@ -35,9 +35,8 @@ class GameTests {
     }
 
     @Test
-    void whenMadeMoveNextActive() {
+    void whenMadeMoveNextActive() throws IllegalMove {
 
-        try {
             game.play(Tile.QUEEN_BEE, 0, 0);
             game.play(Tile.QUEEN_BEE, 1, 0);
             game.move(0, 0, 0, 1);
@@ -47,9 +46,6 @@ class GameTests {
             game.move(1, 0, 1, -1);
             assertEquals(Player.WHITE,
                     game.getCurrentPlayer());
-        } catch (IllegalMove e) {
-            fail(e);
-        }
     }
 
     @Test

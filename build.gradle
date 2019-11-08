@@ -13,6 +13,9 @@ plugins {
     // Apply the checkstyle plugin to add linting
     id 'checkstyle'
 
+    // Code coverage
+    id 'jacoco'
+
 }
 
 repositories {
@@ -40,3 +43,7 @@ checkstyle {
 }
 
 checkstyleMain.exclude '**/Hive.java'
+
+jacoco {
+    toolVersion = "0.8.4"
+}
