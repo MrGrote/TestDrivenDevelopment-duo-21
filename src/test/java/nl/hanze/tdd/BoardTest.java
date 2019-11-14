@@ -69,4 +69,21 @@ class BoardTest {
 
         assertTrue(game.getCurrentBoard().isValidState());
     }
+
+    @Test
+    void givenPointsNotOnStraightLineWhenIsInStriaghtLineThenFalse() {
+        assertFalse(Board.isInStraightLine(new Point(3, -3), new Point(-2, 1)));
+        assertFalse(Board.isInStraightLine(new Point(3, -3), new Point(-3, 1)));
+    }
+
+    @Test
+    void givenPointsOnStriaghtLineWhenIsInStraightLineThenTrue() {
+        assertTrue(Board.isInStraightLine(new Point(-2, -1), new Point(3, -1)));
+        assertTrue(Board.isInStraightLine(new Point(-3, 0), new Point(0, -3)));
+        assertTrue(Board.isInStraightLine(new Point(-3, 0), new Point(-3, 2)));
+        assertTrue(Board.isInStraightLine(new Point(-3, 0), new Point(-5, 0)));
+        assertTrue(Board.isInStraightLine(new Point(-3, 0), new Point(-3, -5)));
+        assertTrue(Board.isInStraightLine(new Point(-3, 0), new Point(-5, 2)));
+    }
 }
+

@@ -219,4 +219,19 @@ public class Board {
         }
         return occupiedNeighbours;
     }
+
+    /**
+     * Check wether there is a straight line from a to b.
+     * @param a a point on the path
+     * @param b a point on the path
+     * @return a boolean indicating wether there is a straight line
+     */
+    public static boolean isInStraightLine(final Point a, final Point b) {
+        int dx = a.x - b.x;
+        int dy = a.y - b.y;
+        if (dx == 0 || dy == 0 || dx == -dy) {
+            return true;
+        }
+        return false;
+    }
 }
