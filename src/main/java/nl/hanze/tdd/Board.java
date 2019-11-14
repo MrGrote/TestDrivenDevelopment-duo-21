@@ -92,7 +92,7 @@ public class Board {
                 if (this.getHexagon(neigbour)
                         .peek()
                         .getColour()
-                        .equals(opponent)) {
+                        == opponent) {
                     return true;
                 }
             }

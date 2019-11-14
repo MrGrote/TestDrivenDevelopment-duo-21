@@ -61,7 +61,6 @@ class Game implements Hive {
         if (player == Player.WHITE) {
             return Player.BLACK;
         } else {
-
             return Player.WHITE;
         }
     }
@@ -146,7 +145,7 @@ class Game implements Hive {
         }
         try {
             GamePiece piece = this.field.getHexagon(fromPoint).peek();
-            if (!piece.getColour().equals(this.currentPlayer)) {
+            if (!(piece.getColour() == this.currentPlayer)) {
                 throw new IllegalMove();
             }
 
@@ -176,8 +175,8 @@ class Game implements Hive {
     public boolean isWinner(final Player player) {
         for (Point coordinate : this.field.keySet()) {
             GamePiece piece = this.field.getHexagon(coordinate).peek();
-            if (piece.getTile().equals(Tile.QUEEN_BEE)
-                && piece.getColour().equals(getOpponent(player))) {
+            if (piece.getTile() == Tile.QUEEN_BEE
+                && piece.getColour() == getOpponent(player)) {
                 Point[] neighbours = this.field.getNeigbours(coordinate);
                 return this.field.allNeighboursInKeyset(neighbours);
             }
@@ -201,7 +200,7 @@ class Game implements Hive {
         boolean white = false;
         for (Point coordinate : this.field.keySet()) {
             GamePiece piece = this.field.getHexagon(coordinate).peek();
-            if (piece.getColour().equals(Player.BLACK)) {
+            if (piece.getColour() == Player.BLACK) {
                 black = true;
             } else {
                 white = true;
