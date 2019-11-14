@@ -39,6 +39,7 @@ test {
 
 checkstyle {
     toolVersion = '8.26'
+    sourceSets = [project.sourceSets.main]
     configFile file('config/checkstyle/checkstyle.xml')
 }
 

@@ -16,6 +16,8 @@ class Game implements Hive {
     private Player currentPlayer = Player.WHITE;
     /** Declaring the board. */
     private Board field;
+    /** Factory for creating gamepieces. */
+    private GamePieceFactory gamePieceFactory;
 
     /**
      * Create a game.
@@ -28,6 +30,7 @@ class Game implements Hive {
         this.pieces.put(Player.WHITE,
             new nl.hanze.tdd.Player(Player.WHITE).getPieces());
         this.field = field;
+        this.gamePieceFactory = new GamePieceFactory(field);
     }
 
     /**
@@ -96,26 +99,7 @@ class Game implements Hive {
             && amountPlayed() >= maxPLayedBeforeQueen) {
             throw new IllegalMove();
         }
-        GamePiece piece;
-        switch (tile) {
-        case BEETLE:
-            piece = new Beetle(this.currentPlayer, this.field);
-            break;
-        case GRASSHOPPER:
-            piece = new Grasshopper(this.currentPlayer, this.field);
-            break;
-        case QUEEN_BEE:
-            piece = new QueenBee(this.currentPlayer, this.field);
-            break;
-        case SPIDER:
-            piece = new Spider(this.currentPlayer, this.field);
-            break;
-        case SOLDIER_ANT:
-            piece = new SoldierAnt(this.currentPlayer, this.field);
-            break;
-        default:
-            throw new IllegalMove();
-        }
+        GamePiece piece = gamePieceFactory.getGamePiece(currentPlayer, tile);
 
         Point point = new Point(q, r);
         if (this.pieces.get(this.currentPlayer).get(tile) == 0) {
