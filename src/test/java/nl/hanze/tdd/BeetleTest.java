@@ -66,5 +66,6 @@ public class BeetleTest {
         } catch (IllegalMove e){
             fail(e);
         }
+        assertEquals(new Beetle(Player.WHITE, game.getCurrentBoard()), game.getCurrentBoard().getHexagon(new Point(1, -1)).peek());
     }
 }

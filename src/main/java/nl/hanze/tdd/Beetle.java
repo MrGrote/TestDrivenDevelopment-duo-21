@@ -34,6 +34,8 @@ public final class Beetle  implements GamePiece {
         }
         if (this.board.canPush(from, to)) {
             this.board.put(to, this);
+        } else {
+            throw new IllegalMove();
         }
 
     }

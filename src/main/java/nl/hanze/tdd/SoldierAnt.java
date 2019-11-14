@@ -5,7 +5,8 @@ import nl.hanze.hive.Hive.Player;
 import nl.hanze.hive.Hive.IllegalMove;
 
 import java.awt.Point;
-import java.util.Arrays;
+import java.util.Set;
+import java.util.HashSet;
 
 public final class SoldierAnt  implements GamePiece {
 
@@ -25,13 +26,60 @@ public final class SoldierAnt  implements GamePiece {
         this.colour = colour;
         this.board = board;
     }
+    private boolean routeExists(final Point currentHex,
+                                final Point destination,
+                                final Board board) {
+        Set<Point> visited = new HashSet<>();
+        board.put(currentHex, this);
+        boolean exists = routeExists(currentHex, destination, board, visited);
+        board.pop(currentHex);
+        return exists;
+    }
+    private boolean routeExists(final Point currentHex,
+                                final Point destination,
+                                final Board board,
+                                final Set<Point> visited) {
+        if (currentHex.equals(destination)) {
+            return true;
+        }
+        if (visited.contains(currentHex)) {
+            return false;
+        }
+        visited.add(currentHex);
+        for (Point neighbour : this.board.getNeigbours(currentHex)) {
+            if (board.canPush(currentHex, neighbour)) {
+                board.pop(currentHex);
+                board.put(neighbour, this);
+                boolean routeFound = routeExists(neighbour,
+                                                    destination,
+                                                    board,
+                                                    visited);
+                board.put(currentHex, this);
+                board.pop(neighbour);
+                if (routeFound) {
+                    return true;
+                }
+            }
+        }
+
+
+        return false;
+    }
 
     @Override
     public void move(final Point from, final Point to) throws IllegalMove {
-        if (!Arrays.asList(this.board.getNeigbours(from)).contains(to)
-            || this.board.getHexagon(to) != null) {
+        int maxNeighbours = 6;
+        if (this.board.getOccupiedNeigbours(to).size() == maxNeighbours) {
+            throw new IllegalMove();
+        }
+        if (from.equals(to) || this.board.getHexagon(to) != null) {
             throw new IllegalMove("Illegal destination for Beetle at "
                 + from.toString());
+        }
+        if (routeExists(from, to, this.board)) {
+            this.board.put(to, this);
+        } else {
+            throw new IllegalMove();
         }
 
     }
