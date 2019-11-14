@@ -334,5 +334,24 @@ class GameTests {
 
     }
 
+    @Test
+    void givenThreeNonQueenBeeStonesPlayedWhenPlayNonQueenThenIllegalMove() {
+        try {
+            game.play(Tile.SPIDER, 0, 0);
+            game.play(Tile.GRASSHOPPER, 0, 1);
+            game.play(Tile.GRASSHOPPER, 0, -1);
+            game.play(Tile.QUEEN_BEE, 0, 2);
+            game.play(Tile.BEETLE, 0, -2);
+            game.play(Tile.BEETLE, 0, 3);
+
+        } catch (IllegalMove e) {
+            fail(e);
+        }
+        assertThrows(IllegalMove.class, () -> {
+            game.play(Tile.SPIDER, 0, -3);
+        });
+
+    }
+
 
 }

@@ -35,6 +35,8 @@ public final class QueenBee  implements GamePiece {
         }
         if (this.board.canPush(from, to)) {
             this.board.put(to, this);
+        } else {
+            throw new IllegalMove();
         }
     }
 

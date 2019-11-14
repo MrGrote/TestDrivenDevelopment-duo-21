@@ -5,6 +5,7 @@ import nl.hanze.hive.Hive.Player;
 import nl.hanze.hive.Hive.IllegalMove;
 
 import java.awt.Point;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.HashSet;
 
@@ -69,7 +70,8 @@ public final class SoldierAnt  implements GamePiece {
     @Override
     public void move(final Point from, final Point to) throws IllegalMove {
         int maxNeighbours = 6;
-        if (this.board.getOccupiedNeigbours(to).size() == maxNeighbours) {
+        if (this.board.getOccupiedNeigbours(to).size() == maxNeighbours
+                && !Arrays.asList(this.board.getNeigbours(from)).contains(to)) {
             throw new IllegalMove();
         }
         if (from.equals(to) || this.board.getHexagon(to) != null) {

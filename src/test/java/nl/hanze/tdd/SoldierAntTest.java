@@ -68,6 +68,25 @@ public class SoldierAntTest {
             game.move(-1, -1, 0, 0);
         });
     }
+
+    @Test
+    void givenEnclosedSoldierAntAndDestinationOutisdeEnclosureWhenMoveToDestinationThenIllegalMove() {
+        game.put(new Spider(Player.WHITE, game.getCurrentBoard()), new Point(1, 0));
+        game.put(new Spider(Player.WHITE, game.getCurrentBoard()), new Point(0, 1));
+        game.put(new Spider(Player.WHITE, game.getCurrentBoard()), new Point(-1, 1));
+        game.put(new Spider(Player.WHITE, game.getCurrentBoard()), new Point(-1, 0));
+        game.put(new SoldierAnt(Player.WHITE, game.getCurrentBoard()), new Point(0, 0));
+        try {
+            game.play(Tile.QUEEN_BEE, 0, -1);
+            game.play(Tile.QUEEN_BEE, 1, -1);
+        } catch (IllegalMove e) {
+            fail(e);
+        }
+        assertThrows(IllegalMove.class, () -> {
+            game.move(0, 0, -1, 0);
+        });
+    }
+
     @Test
     void givenSoldierAntAndPossibleRouteWHenMoveThenMoved() {
         game.put(new Spider(Player.WHITE, game.getCurrentBoard()), new Point(0, 2));
@@ -83,6 +102,20 @@ public class SoldierAntTest {
         }
         assertEquals(new SoldierAnt(Player.WHITE, game.getCurrentBoard()), game.getCurrentBoard().getHexagon(new Point(0, 3)).peek());
 
+    }
+    @Test
+    void givenSoldierAntWhenMoveIfNoPathThenIllegalMove() {
+        try {
+            game.play(Tile.QUEEN_BEE, 0, -1);
+            game.play(Tile.QUEEN_BEE, 0, 0);
+            game.play(Tile.SOLDIER_ANT, 0, -2);
+            game.play(Tile.SOLDIER_ANT, 0, 1);
+        } catch (IllegalMove e) {
+            fail(e);
+        }
+        assertThrows(IllegalMove.class, () -> {
+            game.move(0, -2, 20, 20);
+        });
     }
 }
 
