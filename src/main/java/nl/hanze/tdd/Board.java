@@ -9,7 +9,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Arrays;
 
-import static java.lang.Math.min;
+import static java.lang.Math.max;
+
 
 public class Board {
     /** A Map of points and stacks of gamepiees representing the board. */
@@ -199,7 +200,7 @@ public class Board {
                 .map(this::getHeight)
                 .min(Integer::compare)
                 .get();
-        return minimum <= min(this.getHeight(from) - 1,
+        return minimum <= max(this.getHeight(from),
                 this.getHeight(to));
     }
 

@@ -28,12 +28,12 @@ public final class Grasshopper  implements GamePiece {
 
     @Override
     public void move(final Point from, final Point to) throws IllegalMove {
-        if (!Arrays.asList(this.board.getNeigbours(from)).contains(to)) {
-            throw new IllegalMove("Illegal destination for Beetle at "
-                + from.toString());
+        if (Arrays.asList(this.board.getNeigbours(from)).contains(to) || this.board.getHexagon(to) != null) {
+            throw new IllegalMove();
         }
-        //if ()
-        this.board.pop(from);
+        if (!Board.isInStraightLine(from, to)) {
+            throw new IllegalMove();
+        }
         this.board.put(to, this);
     }
 

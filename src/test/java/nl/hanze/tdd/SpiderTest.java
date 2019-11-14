@@ -7,7 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.awt.Point;
-import org.junit.jupiter.api.BeforeEach;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,6 +20,7 @@ public class SpiderTest {
         board = new Board();
         game = new Game(board);
     }
+
     @Test
     void givenSpiderWhenMoveSpiderOntoOtherStoneTHenIllegalMove() {
         try {
