@@ -1,12 +1,9 @@
 package nl.hanze.tdd;
 
 import nl.hanze.hive.Hive.IllegalMove;
-import nl.hanze.hive.Hive.Player;
 import nl.hanze.hive.Hive.Tile;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.awt.Point;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;

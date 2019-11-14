@@ -49,11 +49,14 @@ public final class Grasshopper  implements GamePiece {
 
     @Override
     public boolean equals(final Object other) {
-        if (other instanceof GamePiece) {
-            GamePiece otherPiece = (GamePiece) other;
-            return this.getColour().equals(otherPiece.getColour())
-            && this.getTile() == otherPiece.getTile();
+        if (other instanceof Grasshopper) {
+            return this.hashCode() == other.hashCode();
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.tile.hashCode() + this.colour.hashCode();
     }
 }

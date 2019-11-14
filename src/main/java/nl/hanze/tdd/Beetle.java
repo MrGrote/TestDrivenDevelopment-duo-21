@@ -32,7 +32,7 @@ public final class Beetle  implements GamePiece {
             throw new IllegalMove("Illegal destination for Beetle at "
                 + from.toString());
         }
-        if (this.board.canPush(from, to)){
+        if (this.board.canPush(from, to)) {
             this.board.put(to, this);
         }
 
@@ -50,11 +50,14 @@ public final class Beetle  implements GamePiece {
 
     @Override
     public boolean equals(final Object other) {
-        if (other instanceof GamePiece) {
-            GamePiece otherPiece = (GamePiece) other;
-            return this.getColour().equals(otherPiece.getColour())
-            && this.getTile() == otherPiece.getTile();
+        if (other instanceof Beetle) {
+            return this.hashCode() == other.hashCode();
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.tile.hashCode() + this.colour.hashCode();
     }
 }

@@ -203,6 +203,12 @@ public class Board {
                 this.getHeight(to));
     }
 
+    /**
+     * Get a set of all the neighbours of the point that have gamepiece in them.
+     * @param point the point from which to get the neighbours
+     * @return a set containing all the neighbouring points that have stones in
+     * them.
+     */
     public Set<Point> getOccupiedNeigbours(final Point point) {
         Set<Point> occupiedNeighbours = new HashSet<>();
         Point[] neigbours = this.getNeigbours(point);

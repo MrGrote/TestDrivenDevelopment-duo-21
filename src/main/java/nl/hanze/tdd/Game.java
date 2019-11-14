@@ -3,10 +3,8 @@ package nl.hanze.tdd;
 import java.awt.Point;
 import java.util.EmptyStackException;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 import nl.hanze.hive.Hive;
-import static java.lang.Math.min;
+
 
 /**
  * The main game class.

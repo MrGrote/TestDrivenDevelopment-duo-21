@@ -28,7 +28,8 @@ public final class SoldierAnt  implements GamePiece {
 
     @Override
     public void move(final Point from, final Point to) throws IllegalMove {
-        if (!Arrays.asList(this.board.getNeigbours(from)).contains(to) || this.board.getHexagon(to) != null) {
+        if (!Arrays.asList(this.board.getNeigbours(from)).contains(to)
+            || this.board.getHexagon(to) != null) {
             throw new IllegalMove("Illegal destination for Beetle at "
                 + from.toString());
         }
@@ -47,11 +48,14 @@ public final class SoldierAnt  implements GamePiece {
 
     @Override
     public boolean equals(final Object other) {
-        if (other instanceof GamePiece) {
-            GamePiece otherPiece = (GamePiece) other;
-            return this.getColour().equals(otherPiece.getColour())
-            && this.getTile() == otherPiece.getTile();
+        if (other instanceof SoldierAnt) {
+            return this.hashCode() == other.hashCode();
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.tile.hashCode() + this.colour.hashCode();
     }
 }
