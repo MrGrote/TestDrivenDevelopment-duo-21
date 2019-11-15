@@ -145,4 +145,86 @@ class FullGameTests {
         game.move(1, -2, 1, -1);
 
     }
+
+    /**
+     * https://boardgamearena.com/gamereview?table=60027115
+     */
+    @Test
+    void gameFour() throws IllegalMove {
+        Board board = new Board();
+        Game game = new Game(board);
+        game.play(Tile.GRASSHOPPER, 0, 0);
+        game.play(Tile.GRASSHOPPER, 0, -1);
+        game.play(Tile.QUEEN_BEE, 0, 1);
+        game.play(Tile.QUEEN_BEE, -1, -1);
+        game.play(Tile.SOLDIER_ANT, 1, 0);
+        game.play(Tile.SPIDER, 0, -2);
+        game.move(1, 0, -2, -1);
+        game.play(Tile.SOLDIER_ANT, 1, -2);
+        game.play(Tile.BEETLE, -2, -2);
+        game.move(0, -2, -2, -3);
+        game.move(0, 1, -1, 1);
+        game.move(1, -2, -2, 2);
+        game.play(Tile.GRASSHOPPER, -3, 0);
+        game.play(Tile.GRASSHOPPER, 0, -2);
+        game.move(-3, 0, -1, -2);
+        game.move(-1, -1, -2, 0);
+        game.play(Tile.SPIDER, -3, -1);
+        game.play(Tile.BEETLE, -2, 3);
+        game.move(-3, -1, -2, 1);
+        game.move(-2, 0, -3, 1);
+        game.move(-2, -1, -4, 1);
+        game.move(-2, 3, -1, 2);
+        game.play(Tile.SOLDIER_ANT, -2, -1);
+        game.play(Tile.SPIDER, 1, -2);
+        game.move(-2, -1, -3, 2);
+        game.move(-2, 2, -1, 0);
+        game.play(Tile.GRASSHOPPER, -3, 3);
+        game.move(1, -2, 0, 1);
+        game.move(-3, 3, -3, 0);
+        game.play(Tile.BEETLE, -2, 3);
+        game.play(Tile.SPIDER, -4, 0);
+        game.move(-2, 3, -2, 2);
+    }
+
+    /**
+     * 
+     */
+    @Test
+    void gameFive() throws IllegalMove {
+        Board board = new Board();
+        Game game = new Game(board);
+        game.play(Tile.SPIDER, 0, 0);
+        game.play(Tile.SOLDIER_ANT, -1, 0);
+        game.play(Tile.BEETLE, 0, 1);
+        game.play(Tile.SPIDER, -1, -1);
+        game.play(Tile.SPIDER, 1, -1);
+        game.play(Tile.GRASSHOPPER, -2, 1);
+        game.play(Tile.QUEEN_BEE, 1, 0);
+        game.play(Tile.QUEEN_BEE, -1, -2);
+        game.move(1, -1, 0, -3);
+        game.move(-2, 1, 0, -1);
+        game.play(Tile.BEETLE, 0, -4);
+        game.move(-1, 0, 2, -1);
+        game.play(Tile.SOLDIER_ANT, 1, 1);
+        game.play(Tile.BEETLE, 3, -1);
+        game.move(1, 1, 4, -1);
+        game.play(Tile.BEETLE, 3, -2);
+        game.move(0, -4, 0, -3);
+        game.move(3, -2, 2, -1);
+        game.move(0, -3, -1, -2);
+        game.move(2, -1, 2, 0);
+        game.play(Tile.GRASSHOPPER, -2, -2);
+        game.play(Tile.SOLDIER_ANT, 2, 1);
+        game.play(Tile.SOLDIER_ANT, -1, -3);
+        game.move(2, 1, 1, 1);
+        game.move(0, 1, 1, 1);
+        game.move(2, 0, 1, 1);
+        game.play(Tile.GRASSHOPPER, 1, -4);
+        game.play(Tile.GRASSHOPPER, 1, 2);
+        game.move(1, -4, -2, -1);
+        game.move(1, 2, 1, -1);
+        game.move(-1, -2, 0, -2);
+
+    }
 }

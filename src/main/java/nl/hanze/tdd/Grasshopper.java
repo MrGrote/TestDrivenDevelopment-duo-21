@@ -31,19 +31,19 @@ public final class Grasshopper  implements GamePiece {
         if (dx == 0 && dy > 0) {
             return new int[] {0, 1};
         }
-        if (dx == 0 && dy < 0) {
+        else if (dx == 0 && dy < 0) {
             return new int[] {0, -1};
         }
-        if (dx > 0 && dy == 0) {
+        else if (dx > 0 && dy == 0) {
             return new int[] {1, 0};
         }
-        if (dx < 0 && dy == 0) {
+        else if (dx < 0 && dy == 0) {
             return new int[] {-1, 0};
         }
-        if (dx == -dy && dx > 0) {
+        else if (dx == -dy && dx > 0) {
             return new int[] {1, -1};
         }
-        if (dx == -dy && dx < 0) {
+        else if (dx == -dy && dx < 0) {
             return new int[] {-1, 1};
         }
         throw new IllegalArgumentException();
