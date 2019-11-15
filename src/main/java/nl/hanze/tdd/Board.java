@@ -164,7 +164,7 @@ public class Board {
     }
     /** returns the keyset.
      * @return the keyset*/
-    public Iterable<? extends Point> keySet() {
+    public Set<Point> keySet() {
         return this.field.keySet();
     }
 

@@ -32,4 +32,13 @@ public interface GamePiece {
      * @exception  IllegalMove throw illegal move
      */
     void move(Point from, Point to) throws IllegalMove;
+
+    /**
+     * Cechk if player can move.
+     *
+     * @param from the origin
+     * @param to the destination
+     * @return wether or not the player still can make a move
+     */
+    boolean canMove(Point from, Point to);
 }

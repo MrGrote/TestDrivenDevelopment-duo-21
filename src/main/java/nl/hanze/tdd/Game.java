@@ -1,9 +1,7 @@
 package nl.hanze.tdd;
 
 import java.awt.Point;
-import java.util.EmptyStackException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import nl.hanze.hive.Hive;
 
@@ -20,6 +18,8 @@ class Game implements Hive {
     private Board field;
     /** Factory for creating gamepieces. */
     private GamePieceFactory gamePieceFactory;
+    /** Integer representing the total pieces per player*/
+    private int totalPieces = 11;
 
     /**
      * Create a game.
@@ -88,7 +88,6 @@ class Game implements Hive {
                                   .stream()
                                   .mapToInt(Integer::intValue)
                                   .sum();
-        int totalPieces = 11;
         return totalPieces - remainingPieces;
     }
 
@@ -166,10 +165,56 @@ class Game implements Hive {
         this.currentPlayer = getOpponent(this.currentPlayer);
 
     }
+    private boolean hasPiecesLeft() {
+        return totalPieces - amountPlayed() != 0;
+    }
+    private Set<Point> getBorder() {
+        Set<Point> points = this.field.keySet();
+        Set<Point> neighbours = new HashSet<>();
+        for (Point point : points) {
+            neighbours.addAll(Arrays.asList(this.field.getNeigbours(point)));
+        }
+        neighbours.removeAll(points);
+        return neighbours;
+    }
+    private boolean canPlay() {
+        Set<Point> border = getBorder();
+
+        if (!hasPiecesLeft()) {
+            return false;
+        }
+        if (this.field.keySet().size() <= 1) {
+            return true;
+        }
+        for (Point point : border) {
+            if (this.field.getOccupiedNeigbours(point)
+                    .stream().anyMatch(p -> this.field.getHexagon(p).peek().getColour() != currentPlayer)) {
+                return true;
+            }
+
+        }
+        return false;
+    }
+    private boolean canMove() {
+        Set<Point> border = getBorder();
+        for (Point point : this.field.keySet()) {
+            for (Point destination : border) {
+                if (this.field.getHexagon(point).peek().canMove(point, destination)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     @Override
     public void pass() throws IllegalMove {
-        this.currentPlayer = getOpponent(this.currentPlayer);
+        if (!canPlay() && !canMove()) {
+            this.currentPlayer = getOpponent(this.currentPlayer);
+        } else {
+            throw new IllegalMove();
+        }
+
 
     }
 

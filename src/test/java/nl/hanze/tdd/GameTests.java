@@ -61,16 +61,64 @@ class GameTests {
     }
 
     @Test
-    void whenMadePassNextActive() {
-        try {
+    void whenMadePassNextActive() throws IllegalMove {
+            game.play(Tile.GRASSHOPPER, 0, 0);
+            game.play(Tile.GRASSHOPPER, 0, -1);
+            game.play(Tile.SOLDIER_ANT, 0, 1);
+            game.play(Tile.QUEEN_BEE, -1, -1);
+            game.play(Tile.QUEEN_BEE, 1, 0);
+            game.play(Tile.SOLDIER_ANT, 1, -2);
+            game.move(0, 1, 1, -3);
+            game.play(Tile.SOLDIER_ANT, -2, 0);
+            game.play(Tile.SPIDER, -1, 1);
+            game.move(-2, 0, -1, 2);
+            game.play(Tile.SOLDIER_ANT, 2, -1);
+            game.play(Tile.SPIDER, 0, 2);
+            game.move(2, -1, 0, 3);
+            game.play(Tile.SOLDIER_ANT, -2, 0);
+            game.play(Tile.SPIDER, -1, 4);
+            game.move(-2, 0, -1, 5);
+            game.play(Tile.SOLDIER_ANT, 2, -1);
+            game.play(Tile.GRASSHOPPER, -2, -1);
+            game.move(2, -1, -2, 6);
+            game.play(Tile.GRASSHOPPER, -2, 0);
+            game.play(Tile.BEETLE, 0, -3);
+            game.move(-2, 0, 0, -2);
+            game.move(1, -3, 2, -3);
+            game.move(-2, -1, 1, -1);
+            game.move(0, -3, 0, -2);
+            game.play(Tile.BEETLE, -2, 0);
+            game.play(Tile.BEETLE, 0, -3);
+            game.move(0, -1, 0, -4);
+            game.move(2, -3, -3, 0);
+            game.play(Tile.SPIDER, 2, -2);
+            game.move(1, 0, 2, -1);
+            game.move(2, -2, 2, 0);
+            game.move(0, -2, 1, -2);
+            game.play(Tile.BEETLE, -1, -4);
+            game.play(Tile.GRASSHOPPER, 2, -3);
+            game.move(-1, -4, -1, -3);
+            game.move(1, -2, 0, -2);
+            game.move(0, -4, -2, -2);
+            game.move(-3, 0, -3, 1);
+            game.move(2, 0, 2, -2);
+            game.move(2, -1, 3, -2);
+            game.move(-2, -2, 0, -4);
+            game.play(Tile.GRASSHOPPER, -3, 6);
+            game.move(-1, -3, 0, -3);
+            game.move(0, -2, -1, -1);
+            game.move(0, -3, 0, -2);
+            game.move(-1, -1, 0, -2);
+            game.move(0, -4, 0, -1);
+            game.move(-3, 6, -1, 6);
+            game.move(0, -1, 3, -4);
+            game.move(0, -3, 0, -2);
+            game.move(3, -4, 0, -1);
+            game.move(0, -2, 0, -1);
+            game.move(1, -1, 1, -3);
+            game.move(-2, 6, 1, -4);
             game.pass();
-        } catch (IllegalMove e) {
-        }
-        assertEquals(Player.BLACK, game.getCurrentPlayer());
-        try {
-            game.pass();
-        } catch (IllegalMove e) {
-        }
+
         assertEquals(Player.WHITE, game.getCurrentPlayer());
     }
 
@@ -78,7 +126,7 @@ class GameTests {
     void whenPlayPlayedPieceThenIllegalMove() {
         try {
             game.play(Tile.QUEEN_BEE, 0, 0);
-            game.pass();
+            game.play(Tile.QUEEN_BEE, 0, -1);
         } catch (IllegalMove e) {
             fail();
         }
@@ -266,13 +314,11 @@ class GameTests {
 
     @Test
     void whenUnblockedPushThenLegalPush() {
-        game.put(new QueenBee(Player.BLACK, board), new Point(0, -1));
-
         try {
-            game.pass();
             game.play(Tile.QUEEN_BEE, 0, 0);
-            game.pass();
-            game.push(new Point(0, 0), new Point(-1, 0));
+            game.play(Tile.QUEEN_BEE, 0, -1);
+            game.play(Tile.GRASSHOPPER, 0, 1);
+            game.push(new Point(0, -1), new Point(-1, 0));
         } catch (IllegalMove e) {
             fail(e);
         }
@@ -282,16 +328,17 @@ class GameTests {
 
     @Test
     void whenUnconnectedPushThenIllegalMove() {
+
+        try {
+            game.play(Tile.QUEEN_BEE, 0, 0);
+            game.play(Tile.QUEEN_BEE, 0, 1);
+        } catch (IllegalMove e) {
+            fail(e);
+        }
         game.put(new SoldierAnt(Player.WHITE, board), new Point(-1, -1));
         game.put(new SoldierAnt(Player.WHITE, board), new Point(1, -1));
         game.put(new Spider(Player.BLACK, board), new Point(0, -2));
         game.put(new Spider(Player.WHITE, board), new Point(1, -2));
-        try {
-            game.play(Tile.QUEEN_BEE, 0, 0);
-            game.pass();
-        } catch (IllegalMove e) {
-            fail(e);
-        }
         assertThrows(IllegalMove.class, () -> {
             game.push(new Point(0, 0), new Point(-1, 0));
         });
@@ -305,7 +352,7 @@ class GameTests {
         game.put(new Spider(Player.WHITE, board), new Point(1, -2));
         try {
             game.play(Tile.QUEEN_BEE, 0, 0);
-            game.pass();
+            game.play(Tile.QUEEN_BEE, 0, -3);
             game.push(new Point(0, 0), new Point(0, -1));
         } catch (IllegalMove e) {
             fail(e);
@@ -351,6 +398,64 @@ class GameTests {
             game.play(Tile.SPIDER, 0, -3);
         });
 
+    }
+
+    @Test
+    void givenAUnplayedPieceWhenPassThenIllegalMove() {
+        assertThrows(IllegalMove.class, () -> {
+            game.pass();
+        });
+    }
+
+    @Test
+    void givenAPossibleMoveWhenPassThenIllegalMove() throws IllegalMove{
+        game.play(Tile.GRASSHOPPER, 0, 0);
+        game.play(Tile.GRASSHOPPER, 0, -1);
+        game.play(Tile.SOLDIER_ANT, 0, 1);
+        game.play(Tile.QUEEN_BEE, -1, -1);
+        game.play(Tile.QUEEN_BEE, 1, 0);
+        game.play(Tile.SOLDIER_ANT, 1, -2);
+        game.move(0, 1, 1, -3);
+        game.play(Tile.SOLDIER_ANT, -2, 0);
+        game.play(Tile.SPIDER, -1, 1);
+        game.move(-2, 0, -1, 2);
+        game.play(Tile.SOLDIER_ANT, 2, -1);
+        game.play(Tile.SPIDER, 0, 2);
+        game.move(2, -1, 0, 3);
+        game.play(Tile.SOLDIER_ANT, -2, 0);
+        game.play(Tile.SPIDER, -1, 4);
+        game.move(-2, 0, -1, 5);
+        game.play(Tile.SOLDIER_ANT, 2, -1);
+        game.play(Tile.GRASSHOPPER, -2, -1);
+        game.move(2, -1, -2, 6);
+        game.play(Tile.GRASSHOPPER, -2, 0);
+        game.play(Tile.BEETLE, 0, -3);
+        game.move(-2, 0, 0, -2);
+        game.move(1, -3, 2, -3);
+        game.move(-2, -1, 1, -1);
+        game.move(0, -3, 0, -2);
+        game.play(Tile.BEETLE, -2, 0);
+        game.play(Tile.BEETLE, 0, -3);
+        game.move(0, -1, 0, -4);
+        game.move(2, -3, -3, 0);
+        game.play(Tile.SPIDER, 2, -2);
+        game.move(1, 0, 2, -1);
+        game.move(2, -2, 2, 0);
+        game.move(0, -2, 1, -2);
+        game.play(Tile.BEETLE, -1, -4);
+        game.play(Tile.GRASSHOPPER, 2, -3);
+        game.move(-1, -4, -1, -3);
+        game.move(1, -2, 0, -2);
+        game.move(0, -4, -2, -2);
+        game.move(-3, 0, -3, 1);
+        game.move(2, 0, 2, -2);
+        game.move(2, -1, 3, -2);
+        game.move(-2, -2, 0, -4);
+        game.play(Tile.GRASSHOPPER, -3, 6);
+
+        assertThrows(IllegalMove.class, () -> {
+            game.pass();
+        });
     }
 
 

@@ -69,21 +69,30 @@ public final class SoldierAnt  implements GamePiece {
 
     @Override
     public void move(final Point from, final Point to) throws IllegalMove {
-        int maxNeighbours = 6;
-        if (this.board.getOccupiedNeigbours(to).size() == maxNeighbours
-                && !Arrays.asList(this.board.getNeigbours(from)).contains(to)) {
-            throw new IllegalMove();
-        }
-        if (from.equals(to) || this.board.getHexagon(to) != null) {
-            throw new IllegalMove("Illegal destination for Beetle at "
-                + from.toString());
-        }
-        if (routeExists(from, to, this.board)) {
+
+
+        if (canMove(from, to)) {
             this.board.put(to, this);
         } else {
             throw new IllegalMove();
         }
 
+    }
+
+    @Override
+    public boolean canMove(final Point from, final Point to) {
+        int maxNeighbours = 6;
+        if (this.board.getOccupiedNeigbours(to).size() == maxNeighbours
+                && !Arrays.asList(this.board.getNeigbours(from)).contains(to)) {
+            return false;
+        }
+        if (from.equals(to) || this.board.getHexagon(to) != null) {
+            return false;
+        }
+        if (!routeExists(from, to, this.board)) {
+            return false;
+        }
+        return true;
     }
 
     @Override

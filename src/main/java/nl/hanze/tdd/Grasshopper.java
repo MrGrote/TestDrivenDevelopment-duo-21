@@ -51,22 +51,31 @@ public final class Grasshopper  implements GamePiece {
 
     @Override
     public void move(final Point from, final Point to) throws IllegalMove {
+        if (canMove(from, to)) {
+            this.board.put(to, this);
+        } else {
+            throw new IllegalMove();
+        }
+
+    }
+
+    @Override
+    public boolean canMove(final Point from, final Point to) {
         if (Arrays.asList(this.board.getNeigbours(from)).contains(to)
                 || this.board.getHexagon(to) != null
                 || !Board.isInStraightLine(from, to)
                 || from.equals(to)) {
-            throw new IllegalMove();
+            return false;
         }
-
         int[] direction = getDirections(from, to);
         Point currentPoint = new Point(from.x + direction[0], from.y + direction[1]);
         while (!currentPoint.equals(to)) {
             if (this.board.getHexagon(currentPoint) == null) {
-                throw new IllegalMove();
+                return false;
             }
             currentPoint = new Point(currentPoint.x + direction[0], currentPoint.y + direction[1]);
         }
-        this.board.put(to, this);
+        return true;
     }
 
     @Override

@@ -58,7 +58,7 @@ public class BeetleTest {
         try {
             game.play(Tile.QUEEN_BEE, 0, 0);
             game.play(Tile.QUEEN_BEE, 1, -1);
-            game.pass();
+            game.play(Tile.BEETLE, -1, 0);
             game.play(Tile.BEETLE, 2, -1);
 
             game.move(0, -1, 1, -1);
