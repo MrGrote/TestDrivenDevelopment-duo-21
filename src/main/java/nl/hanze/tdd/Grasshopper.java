@@ -25,14 +25,46 @@ public final class Grasshopper  implements GamePiece {
         this.colour = colour;
         this.board = board;
     }
+    private static int[] getDirections(final Point from, final Point to) {
+        int dx = to.x - from.x;
+        int dy = to.y - from.y;
+        if (dx == 0 && dy > 0) {
+            return new int[] {0, 1};
+        }
+        if (dx == 0 && dy < 0) {
+            return new int[] {0, -1};
+        }
+        if (dx > 0 && dy == 0) {
+            return new int[] {1, 0};
+        }
+        if (dx < 0 && dy == 0) {
+            return new int[] {-1, 0};
+        }
+        if (dx == -dy && dx > 0) {
+            return new int[] {1, -1};
+        }
+        if (dx == -dy && dx < 0) {
+            return new int[] {-1, 1};
+        }
+        throw new IllegalArgumentException();
+    }
 
     @Override
     public void move(final Point from, final Point to) throws IllegalMove {
-        if (Arrays.asList(this.board.getNeigbours(from)).contains(to) || this.board.getHexagon(to) != null) {
+        if (Arrays.asList(this.board.getNeigbours(from)).contains(to)
+                || this.board.getHexagon(to) != null
+                || !Board.isInStraightLine(from, to)
+                || from.equals(to)) {
             throw new IllegalMove();
         }
-        if (!Board.isInStraightLine(from, to)) {
-            throw new IllegalMove();
+
+        int[] direction = getDirections(from, to);
+        Point currentPoint = new Point(from.x + direction[0], from.y + direction[1]);
+        while (!currentPoint.equals(to)) {
+            if (this.board.getHexagon(currentPoint) == null) {
+                throw new IllegalMove();
+            }
+            currentPoint = new Point(currentPoint.x + direction[0], currentPoint.y + direction[1]);
         }
         this.board.put(to, this);
     }
