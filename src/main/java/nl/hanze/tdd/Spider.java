@@ -5,7 +5,6 @@ import nl.hanze.hive.Hive.Player;
 import nl.hanze.hive.Hive.IllegalMove;
 
 import java.awt.Point;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -52,11 +51,12 @@ public final class Spider  implements GamePiece {
         if (visited.contains(currentHex) || depth == 0) {
             return false;
         }
-        visited.add(currentHex);
         for (Point neighbour : this.board.getNeigbours(currentHex)) {
-            if (board.getHexagon(neighbour) == null && board.canPush(currentHex, neighbour)) {
+            if (board.getHexagon(neighbour) == null
+                    && board.canPush(currentHex, neighbour)) {
                 board.pop(currentHex);
                 board.put(neighbour, this);
+                visited.add(currentHex);
                 boolean routeFound = routeExists(neighbour,
                         destination,
                         board,
@@ -64,6 +64,7 @@ public final class Spider  implements GamePiece {
                         depth - 1);
                 board.put(currentHex, this);
                 board.pop(neighbour);
+                visited.remove(currentHex);
                 if (routeFound) {
                     return true;
                 }

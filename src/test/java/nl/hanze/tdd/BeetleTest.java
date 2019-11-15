@@ -68,4 +68,20 @@ public class BeetleTest {
         }
         assertEquals(new Beetle(Player.WHITE, game.getCurrentBoard()), game.getCurrentBoard().getHexagon(new Point(1, -1)).peek());
     }
+
+    @Test
+    void givenBeetleWhenMoveBeetleOntoOtherStoneAndNoSharedNeighbourThenBeetleMoved() {
+        try {
+            game.play(Tile.QUEEN_BEE, 0, 0);
+            game.play(Tile.QUEEN_BEE, 0, 1);
+            game.play(Tile.BEETLE, 0, -1);
+            game.play(Tile.BEETLE, 0, 2);
+            game.move(0, -1, 0, 0);
+
+        } catch (IllegalMove e){
+            fail(e);
+        }
+        assertEquals(new Beetle(Player.WHITE, game.getCurrentBoard()),
+                game.getCurrentBoard().getHexagon(new Point(0, 0)).peek());
+    }
 }

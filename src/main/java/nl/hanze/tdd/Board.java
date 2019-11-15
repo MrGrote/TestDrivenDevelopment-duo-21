@@ -187,6 +187,7 @@ public class Board {
      */
     public boolean canPush(final Point from, final Point to) {
         Set<Point> toNeighbours = getOccupiedNeigbours(to);
+        toNeighbours.add(to);
         Set<Point> fromNeighbours = getOccupiedNeigbours(from);
         fromNeighbours.retainAll(toNeighbours);
 
