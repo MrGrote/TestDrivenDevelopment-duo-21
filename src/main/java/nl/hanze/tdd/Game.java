@@ -1,7 +1,12 @@
 package nl.hanze.tdd;
 
 import java.awt.Point;
-import java.util.*;
+import java.util.Map;
+import java.util.Arrays;
+import java.util.EmptyStackException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import nl.hanze.hive.Hive;
 
@@ -18,7 +23,7 @@ class Game implements Hive {
     private Board field;
     /** Factory for creating gamepieces. */
     private GamePieceFactory gamePieceFactory;
-    /** Integer representing the total pieces per player*/
+    /** Integer representing the total pieces per player. */
     private int totalPieces = 11;
 
     /**
@@ -188,7 +193,10 @@ class Game implements Hive {
         }
         for (Point point : border) {
             if (this.field.getOccupiedNeigbours(point)
-                    .stream().anyMatch(p -> this.field.getHexagon(p).peek().getColour() != currentPlayer)) {
+                    .stream().anyMatch(p -> this.field
+                             .getHexagon(p)
+                             .peek()
+                             .getColour() != currentPlayer)) {
                 return true;
             }
 
@@ -199,7 +207,9 @@ class Game implements Hive {
         Set<Point> border = getBorder();
         for (Point point : this.field.keySet()) {
             for (Point destination : border) {
-                if (this.field.getHexagon(point).peek().canMove(point, destination)) {
+                if (this.field.getHexagon(point)
+                              .peek()
+                              .canMove(point, destination)) {
                     return true;
                 }
             }
