@@ -3,6 +3,8 @@ package nl.hanze.tdd;
 import java.awt.Point;
 import java.util.EmptyStackException;
 import java.util.HashMap;
+import java.util.Map;
+
 import nl.hanze.hive.Hive;
 
 
@@ -11,7 +13,7 @@ import nl.hanze.hive.Hive;
  */
 class Game implements Hive {
     /** A List of pieces that can still be placed. */
-    private HashMap<Player, HashMap<Tile, Integer>> pieces = new HashMap<>();
+    private Map<Player, Map<Tile, Integer>> pieces = new HashMap<>();
     /** The player whose turn it is. */
     private Player currentPlayer = Player.WHITE;
     /** Declaring the board. */

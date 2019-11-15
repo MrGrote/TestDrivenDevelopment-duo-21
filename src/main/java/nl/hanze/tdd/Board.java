@@ -11,7 +11,6 @@ import java.util.Arrays;
 
 import static java.lang.Math.max;
 
-
 public class Board {
     /** A Map of points and stacks of gamepiees representing the board. */
     private Map<Point, Stack<GamePiece>> field;
@@ -192,8 +191,7 @@ public class Board {
 
         if (fromNeighbours.size() == 1) {
             return true;
-        }
-        if (fromNeighbours.size() == 0) {
+        } else if (fromNeighbours.size() == 0) {
             return false;
         }
         int minimum = fromNeighbours.stream()
