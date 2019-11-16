@@ -206,11 +206,12 @@ class Game implements Hive {
     private boolean canMove() {
         Set<Point> border = getBorder();
         for (Point point : this.field.keySet()) {
-            for (Point destination : border) {
-                if (this.field.getHexagon(point)
-                              .peek()
-                              .canMove(point, destination)) {
-                    return true;
+            GamePiece piece = this.field.getHexagon(point).peek();
+            if (piece.getColour() == currentPlayer) {
+                for (Point destination : border) {
+                    if (piece.canMove(point, destination)) {
+                        return true;
+                    }
                 }
             }
         }

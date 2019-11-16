@@ -26,6 +26,7 @@ public final class Spider  implements GamePiece {
         this.colour = colour;
         this.board = board;
     }
+
     private boolean routeExists(final Point currentHex,
                                 final Point destination,
                                 final Board board) {
@@ -91,7 +92,7 @@ public final class Spider  implements GamePiece {
         if (from.equals(to) || this.board.getHexagon(to) != null) {
             return false;
         }
-        if (!routeExists(from, to, this.board)) {
+        if (!routeExists(from, to, this.board) || !this.board.isValidState()) {
             return false;
         }
         return true;
