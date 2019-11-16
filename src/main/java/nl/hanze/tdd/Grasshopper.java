@@ -9,15 +9,15 @@ import java.util.Arrays;
 
 public final class Grasshopper implements GamePiece {
 
-    /** The Queen Bee's tile. */
+    /** The Grasshopper's tile. */
     private final Tile tile = Tile.GRASSHOPPER;
-    /** The colour of the Beetle. */
+    /** The colour of the Grasshopper. */
     private final Player colour;
-    /** The board the beetle is on. */
+    /** The board the grasshopper is on. */
     private final Board board;
 
     /**
-     * Create a new QueenBee.
+     * Create a new Grasshopper.
      *
      * @param colour The colour of the tile.
      * @param board  The board the Grassphopper is on.

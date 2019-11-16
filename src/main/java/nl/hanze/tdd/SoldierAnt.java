@@ -11,15 +11,15 @@ import java.util.HashSet;
 
 public final class SoldierAnt  implements GamePiece {
 
-     /** The Queen Bee's tile.   */
+     /** The Soldier Ant's tile.   */
     private final Tile tile = Tile.SOLDIER_ANT;
-    /** The colour of the Beetle. */
+    /** The colour of the Soldier Ant. */
     private final Player colour;
-    /** The board the beetle is on. */
+    /** The board the soldier ant is on. */
     private final Board board;
 
     /**
-     * Create a new QueenBee.
+     * Create a new SoldierAnt.
      * @param colour The colour of the tile.
      * @param board The board the ant exists on.
      */
