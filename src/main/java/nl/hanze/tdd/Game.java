@@ -15,6 +15,10 @@ import nl.hanze.hive.Hive;
  * The main game class.
  */
 class Game implements Hive {
+
+    /** Max tiles played before the queen has to be played. */
+    private static final int MAX_PLAYED_BEFORE_QUEEN = 3;
+
     /** A List of pieces that can still be placed. */
     private Map<Player, Map<Tile, Integer>> pieces = new HashMap<>();
     /** The player whose turn it is. */
@@ -99,9 +103,8 @@ class Game implements Hive {
     @Override
     public void play(final Tile tile, final int q, final int r)
     throws IllegalMove {
-        int maxPLayedBeforeQueen = 3;
         if (tile != Tile.QUEEN_BEE && !queenPlayed()
-            && amountPlayed() >= maxPLayedBeforeQueen) {
+            && amountPlayed() >= MAX_PLAYED_BEFORE_QUEEN) {
             throw new IllegalMove();
         }
         GamePiece piece = gamePieceFactory.getGamePiece(currentPlayer, tile);
@@ -146,9 +149,11 @@ class Game implements Hive {
 
         Point fromPoint = new Point(fromQ, fromR);
         Point toPoint = new Point(toQ, toR);
+
         if (!queenPlayed()) {
             throw new IllegalMove();
         }
+
         try {
             GamePiece piece = this.field.getHexagon(fromPoint).peek();
             if (!(piece.getColour() == this.currentPlayer)) {
@@ -166,7 +171,6 @@ class Game implements Hive {
         } catch (EmptyStackException | NullPointerException e) {
             throw new IllegalMove();
         }
-
         this.currentPlayer = getOpponent(this.currentPlayer);
 
     }

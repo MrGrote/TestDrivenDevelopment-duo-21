@@ -12,26 +12,19 @@ class GamePieceFactory {
     }
 
     public GamePiece getGamePiece(final Player player, final Tile tile) {
-        GamePiece piece;
         switch (tile) {
         case BEETLE:
-            piece = new Beetle(player, this.field);
-            break;
+            return new Beetle(player, this.field);
         case GRASSHOPPER:
-            piece = new Grasshopper(player, this.field);
-            break;
+            return  new Grasshopper(player, this.field);
         case QUEEN_BEE:
-            piece = new QueenBee(player, this.field);
-            break;
+            return new QueenBee(player, this.field);
         case SPIDER:
-            piece = new Spider(player, this.field);
-            break;
+            return new Spider(player, this.field);
         case SOLDIER_ANT:
-            piece = new SoldierAnt(player, this.field);
-            break;
-        default:
-            throw new IllegalArgumentException();
+            return new SoldierAnt(player, this.field);
+        default :
+            return null;
         }
-        return piece;
     }
 }

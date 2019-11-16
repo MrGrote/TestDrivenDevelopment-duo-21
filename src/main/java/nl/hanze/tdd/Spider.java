@@ -10,7 +10,11 @@ import java.util.Set;
 
 public final class Spider  implements GamePiece {
 
-     /** The Spider's tile.   */
+
+    /** maximum recursion depth. */
+    private static final int MAX_DEPTH = 3;
+
+    /** The Spider's tile.   */
     private final Tile tile = Tile.SPIDER;
     /** The colour of the Spider. */
     private final Player colour;
@@ -31,9 +35,8 @@ public final class Spider  implements GamePiece {
         final Point destination, final Board board) {
         Set<Point> visited = new HashSet<>();
         board.put(currentHex, this);
-        int maxDepth = 3;
         boolean exists = routeExists(currentHex, destination, board,
-            visited, maxDepth);
+            visited, MAX_DEPTH);
         board.pop(currentHex);
         return exists;
     }
@@ -66,7 +69,6 @@ public final class Spider  implements GamePiece {
             }
         }
 
-
         return false;
     }
     @Override
@@ -84,7 +86,8 @@ public final class Spider  implements GamePiece {
     public boolean canMove(final Point from, final Point to) {
 
         if (from.equals(to) || this.board.getHexagon(to) != null
-        || !routeExists(from, to, this.board) || !this.board.isValidState()) {
+            || !routeExists(from, to, this.board)
+                || !this.board.isValidState()) {
             return false;
         }
         return true;

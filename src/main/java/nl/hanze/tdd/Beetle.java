@@ -28,13 +28,11 @@ public final class Beetle  implements GamePiece {
 
     @Override
     public void move(final Point from, final Point to) throws IllegalMove {
-
         if (canMove(from, to)) {
             this.board.put(to, this);
         } else {
             throw new IllegalMove();
         }
-
     }
 
     @Override

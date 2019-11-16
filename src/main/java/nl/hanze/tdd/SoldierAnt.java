@@ -10,6 +10,8 @@ import java.util.Set;
 import java.util.HashSet;
 
 public final class SoldierAnt  implements GamePiece {
+    /** Max possible neighbours to a soldier ant.  */
+    private static final int MAX_NEIGHBOURS = 6;
 
      /** The Soldier Ant's tile.   */
     private final Tile tile = Tile.SOLDIER_ANT;
@@ -28,18 +30,18 @@ public final class SoldierAnt  implements GamePiece {
         this.board = board;
     }
     private boolean routeExists(final Point currentHex,
-                                final Point destination,
-                                final Board board) {
-        Set<Point> visited = new HashSet<>();
+        final Point destination, final Board board) {
+        final Set<Point> visited = new HashSet<>();
         board.put(currentHex, this);
-        boolean exists = routeExists(currentHex, destination, board, visited);
+        final boolean exists = routeExists(currentHex, destination,
+            board, visited);
         board.pop(currentHex);
         return exists;
     }
+
     private boolean routeExists(final Point currentHex,
-                                final Point destination,
-                                final Board board,
-                                final Set<Point> visited) {
+        final Point destination, final Board board,
+            final Set<Point> visited) {
         if (currentHex.equals(destination)) {
             return true;
         }
@@ -47,14 +49,12 @@ public final class SoldierAnt  implements GamePiece {
             return false;
         }
         visited.add(currentHex);
-        for (Point neighbour : this.board.getNeigbours(currentHex)) {
+        for (final Point neighbour : this.board.getNeigbours(currentHex)) {
             if (board.canPush(currentHex, neighbour)) {
                 board.pop(currentHex);
                 board.put(neighbour, this);
-                boolean routeFound = routeExists(neighbour,
-                                                    destination,
-                                                    board,
-                                                    visited);
+                final boolean routeFound = routeExists(neighbour, destination,
+                    board, visited);
                 board.put(currentHex, this);
                 board.pop(neighbour);
                 if (routeFound) {
@@ -62,27 +62,21 @@ public final class SoldierAnt  implements GamePiece {
                 }
             }
         }
-
-
         return false;
     }
 
     @Override
     public void move(final Point from, final Point to) throws IllegalMove {
-
-
         if (canMove(from, to)) {
             this.board.put(to, this);
         } else {
             throw new IllegalMove();
         }
-
     }
 
     @Override
     public boolean canMove(final Point from, final Point to) {
-        int maxNeighbours = 6;
-        if (this.board.getOccupiedNeigbours(to).size() == maxNeighbours
+        if (this.board.getOccupiedNeigbours(to).size() == MAX_NEIGHBOURS
                 && !Arrays.asList(this.board.getNeigbours(from)).contains(to)) {
             return false;
         }
