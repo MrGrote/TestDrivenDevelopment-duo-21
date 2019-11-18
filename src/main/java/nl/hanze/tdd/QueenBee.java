@@ -2,7 +2,6 @@ package nl.hanze.tdd;
 
 import nl.hanze.hive.Hive.Tile;
 import nl.hanze.hive.Hive.Player;
-import nl.hanze.hive.Hive.IllegalMove;
 
 import java.awt.Point;
 import java.util.Arrays;
@@ -27,17 +26,7 @@ public final class QueenBee  implements GamePiece {
     }
 
     @Override
-    public void move(final Point from, final Point to) throws IllegalMove {
-
-        if (canMove(from, to)) {
-            this.board.put(to, this);
-        } else {
-            throw new IllegalMove();
-        }
-    }
-
-    @Override
-    public boolean canMove(final Point from, final Point to) {
+    public boolean isLegalMove(final Point from, final Point to) {
         if (!Arrays.asList(this.board.getNeigbours(from)).contains(to)
                 || this.board.getHexagon(to) != null) {
             return false;
@@ -45,6 +34,7 @@ public final class QueenBee  implements GamePiece {
         if (!this.board.canPush(from, to)) {
             return false;
         }
+
         return true;
     }
 

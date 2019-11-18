@@ -3,7 +3,6 @@ package nl.hanze.tdd;
 import java.awt.Point;
 import java.util.Map;
 import java.util.Arrays;
-import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -20,7 +19,7 @@ class Game implements Hive {
     /** The player whose turn it is. */
     private Player currentPlayer = Player.WHITE;
     /** Declaring the board. */
-    private Board field;
+    private Board board;
     /** Factory for creating gamepieces. */
     private GamePieceFactory gamePieceFactory;
     /** Integer representing the total pieces per player. */
@@ -29,15 +28,15 @@ class Game implements Hive {
     /**
      * Create a game.
      *
-     * @param field The board the game is played on.
+     * @param board The board the game is played on.
      */
-    Game(final Board field) {
+    Game(final Board board) {
         this.pieces.put(Player.BLACK,
             new nl.hanze.tdd.Player(Player.BLACK).getPieces());
         this.pieces.put(Player.WHITE,
             new nl.hanze.tdd.Player(Player.WHITE).getPieces());
-        this.field = field;
-        this.gamePieceFactory = new GamePieceFactory(field);
+        this.board = board;
+        this.gamePieceFactory = new GamePieceFactory(board);
     }
 
     /**
@@ -55,7 +54,7 @@ class Game implements Hive {
      * @return the current board.
      */
     public Board getCurrentBoard() {
-        return this.field;
+        return this.board;
     }
 
     /**
@@ -110,17 +109,17 @@ class Game implements Hive {
         if (this.pieces.get(this.currentPlayer).get(tile) == 0) {
             throw new IllegalMove();
         }
-        if (!(this.field.getHexagon(point) == null)) {
+        if (!(this.board.getHexagon(point) == null)) {
             throw new IllegalMove();
         }
 
-        if (!this.field.isEmpty()) {
-            if (!this.field.hasNeighbours(point)) {
+        if (!this.board.isEmpty()) {
+            if (!this.board.hasNeighbours(point)) {
                 throw new IllegalMove();
             }
         }
         if (bothPlayersPlayed()
-            && this.field.hasClashingNeighbours(point, this.currentPlayer)) {
+            && this.board.hasClashingNeighbours(point, this.currentPlayer)) {
             throw new IllegalMove();
         }
         this.pieces.get(this.currentPlayer)
@@ -137,7 +136,7 @@ class Game implements Hive {
      * @param point the location to place the piece at
      */
     public void put(final GamePiece piece, final Point point) {
-        this.field.put(point, piece);
+        this.board.put(point, piece);
     }
 
     @Override
@@ -146,26 +145,29 @@ class Game implements Hive {
 
         Point fromPoint = new Point(fromQ, fromR);
         Point toPoint = new Point(toQ, toR);
-        if (!queenPlayed()) {
-            throw new IllegalMove();
-        }
+
         try {
-            GamePiece piece = this.field.getHexagon(fromPoint).peek();
-            if (!(piece.getColour() == this.currentPlayer)) {
+            GamePiece piece = this.board.getHexagon(fromPoint).peek();
+
+            if (!queenPlayed() || piece.getColour() != currentPlayer) {
                 throw new IllegalMove();
             }
 
-            this.field.pop(fromPoint);
-            boolean found = this.field.hasNeighbours(toPoint);
-
-            if (!found) {
-                this.put(piece, fromPoint);
+            Set<Point> neigbhours = this.board.getOccupiedNeigbours(toPoint);
+            neigbhours.remove(fromPoint);
+            if (neigbhours.size() == 0) {
                 throw new IllegalMove();
             }
-            piece.move(fromPoint, toPoint);
-        } catch (EmptyStackException | NullPointerException e) {
-            throw new IllegalMove();
-        }
+
+            if (piece.isLegalMove(fromPoint, toPoint)) {
+            this.board.pop(fromPoint);
+            this.board.put(toPoint, piece);
+            } else {
+                throw new IllegalMove();
+            }
+        } catch (NullPointerException e) {
+                throw new IllegalMove();
+            }
 
         this.currentPlayer = getOpponent(this.currentPlayer);
 
@@ -174,10 +176,10 @@ class Game implements Hive {
         return totalPieces - amountPlayed() != 0;
     }
     private Set<Point> getBorder() {
-        Set<Point> points = this.field.keySet();
+        Set<Point> points = this.board.keySet();
         Set<Point> neighbours = new HashSet<>();
         for (Point point : points) {
-            neighbours.addAll(Arrays.asList(this.field.getNeigbours(point)));
+            neighbours.addAll(Arrays.asList(this.board.getNeigbours(point)));
         }
         neighbours.removeAll(points);
         return neighbours;
@@ -188,12 +190,12 @@ class Game implements Hive {
         if (!hasPiecesLeft()) {
             return false;
         }
-        if (this.field.keySet().size() <= 1) {
+        if (this.board.keySet().size() <= 1) {
             return true;
         }
         for (Point point : border) {
-            if (this.field.getOccupiedNeigbours(point)
-                    .stream().anyMatch(p -> this.field
+            if (this.board.getOccupiedNeigbours(point)
+                    .stream().anyMatch(p -> this.board
                              .getHexagon(p)
                              .peek()
                              .getColour() != currentPlayer)) {
@@ -205,11 +207,11 @@ class Game implements Hive {
     }
     private boolean canMove() {
         Set<Point> border = getBorder();
-        for (Point point : this.field.keySet()) {
+        for (Point point : new HashSet<>(this.board.keySet())) {
             for (Point destination : border) {
-                if (this.field.getHexagon(point)
+                if (this.board.getHexagon(point)
                               .peek()
-                              .canMove(point, destination)) {
+                              .isLegalMove(point, destination)) {
                     return true;
                 }
             }
@@ -230,12 +232,12 @@ class Game implements Hive {
 
     @Override
     public boolean isWinner(final Player player) {
-        for (Point coordinate : this.field.keySet()) {
-            GamePiece piece = this.field.getHexagon(coordinate).peek();
+        for (Point coordinate : this.board.keySet()) {
+            GamePiece piece = this.board.getHexagon(coordinate).peek();
             if (piece.getTile() == Tile.QUEEN_BEE
                 && piece.getColour() == getOpponent(player)) {
-                Point[] neighbours = this.field.getNeigbours(coordinate);
-                return this.field.allNeighboursInKeyset(neighbours);
+                Point[] neighbours = this.board.getNeigbours(coordinate);
+                return this.board.allNeighboursInKeyset(neighbours);
             }
         }
         return false;
@@ -255,8 +257,8 @@ class Game implements Hive {
     public boolean bothPlayersPlayed() {
         boolean black = false;
         boolean white = false;
-        for (Point coordinate : this.field.keySet()) {
-            GamePiece piece = this.field.getHexagon(coordinate).peek();
+        for (Point coordinate : this.board.keySet()) {
+            GamePiece piece = this.board.getHexagon(coordinate).peek();
             if (piece.getColour() == Player.BLACK) {
                 black = true;
             } else {
@@ -276,7 +278,7 @@ class Game implements Hive {
      * @throws IllegalMove when push obstructed
      */
     public void push(final Point from, final Point to) throws IllegalMove {
-        if (this.field.canPush(from, to)) {
+        if (this.board.canPush(from, to)) {
             move(from.x, from.y, to.x, to.y);
         } else {
             throw new IllegalMove();

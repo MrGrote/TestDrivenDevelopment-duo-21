@@ -2,7 +2,6 @@ package nl.hanze.tdd;
 
 import nl.hanze.hive.Hive.Tile;
 import nl.hanze.hive.Hive.Player;
-import nl.hanze.hive.Hive.IllegalMove;
 
 import java.awt.Point;
 import java.util.HashSet;
@@ -26,6 +25,7 @@ public final class Spider  implements GamePiece {
         this.colour = colour;
         this.board = board;
     }
+
     private boolean routeExists(final Point currentHex,
                                 final Point destination,
                                 final Board board) {
@@ -74,19 +74,9 @@ public final class Spider  implements GamePiece {
 
         return false;
     }
-    @Override
-    public void move(final Point from, final Point to) throws IllegalMove {
-
-        if (canMove(from, to)) {
-            this.board.put(to, this);
-        } else {
-            throw new IllegalMove();
-        }
-
-    }
 
     @Override
-    public boolean canMove(final Point from, final Point to) {
+    public boolean isLegalMove(final Point from, final Point to) {
 
         if (from.equals(to) || this.board.getHexagon(to) != null) {
             return false;
@@ -94,7 +84,13 @@ public final class Spider  implements GamePiece {
         if (!routeExists(from, to, this.board)) {
             return false;
         }
-        return true;
+
+        this.board.pop(from);
+        this.board.put(to, this);
+        boolean result = this.board.isValidState();
+        this.board.pop(to);
+        this.board.put(from, this);
+        return result;
     }
 
     @Override

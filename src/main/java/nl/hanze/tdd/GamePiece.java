@@ -1,7 +1,6 @@
 package nl.hanze.tdd;
 
 import nl.hanze.hive.Hive.Tile;
-import nl.hanze.hive.Hive.IllegalMove;
 import nl.hanze.hive.Hive.Player;
 
 import java.awt.Point;
@@ -25,20 +24,11 @@ public interface GamePiece {
     Tile getTile();
 
     /**
-     * Move from point to point.
-     *
-     * @param from the origin
-     * @param to   the destination
-     * @exception  IllegalMove throw illegal move
-     */
-    void move(Point from, Point to) throws IllegalMove;
-
-    /**
      * Cechk if player can move.
      *
      * @param from the origin
      * @param to the destination
      * @return wether or not the player still can make a move
      */
-    boolean canMove(Point from, Point to);
+    boolean isLegalMove(Point from, Point to);
 }
