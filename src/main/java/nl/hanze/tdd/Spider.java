@@ -4,10 +4,16 @@ import nl.hanze.hive.Hive.Tile;
 import nl.hanze.hive.Hive.Player;
 
 import java.awt.Point;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 
 public final class Spider  implements GamePiece {
+
+    /** The length of a spiders path. */
+    private static final int PATH_LENGTH = 3;
 
      /** The Queen Bee's tile.   */
     private final Tile tile = Tile.SPIDER;
@@ -27,30 +33,23 @@ public final class Spider  implements GamePiece {
     }
 
     private boolean routeExists(final Point currentHex,
-                                final Point destination,
-                                final Board board) {
+            final Point destination) {
         Set<Point> visited = new HashSet<>();
-        board.put(currentHex, this);
-        int maxDepth = 3;
-        boolean exists = routeExists(currentHex,
-                                        destination,
-                                        board,
-                                        visited,
-                                        maxDepth);
-        board.pop(currentHex);
+        boolean exists = routeExists(currentHex, destination, visited,
+            PATH_LENGTH);
         return exists;
     }
-    private boolean routeExists(final Point currentHex,
-                                final Point destination,
-                                final Board board,
-                                final Set<Point> visited,
-                                final int depth) {
+    private boolean routeExists(final Point currentHex, final Point destination,
+            final Set<Point> visited, final int depth) {
+
         if (currentHex.equals(destination) && depth == 0) {
             return true;
         }
-        if (visited.contains(currentHex) || depth == 0) {
+        if (currentHex.equals(destination) || depth == 0
+            || visited.contains(currentHex)) {
             return false;
         }
+
         for (Point neighbour : this.board.getNeigbours(currentHex)) {
             if (board.getHexagon(neighbour) == null
                     && board.canPush(currentHex, neighbour)) {
@@ -58,10 +57,7 @@ public final class Spider  implements GamePiece {
                 board.put(neighbour, this);
                 visited.add(currentHex);
                 boolean routeFound = routeExists(neighbour,
-                        destination,
-                        board,
-                        visited,
-                        depth - 1);
+                        destination, visited, depth - 1);
                 board.put(currentHex, this);
                 board.pop(neighbour);
                 visited.remove(currentHex);
@@ -71,20 +67,20 @@ public final class Spider  implements GamePiece {
             }
         }
 
-
         return false;
     }
 
     @Override
     public boolean isLegalMove(final Point from, final Point to) {
-
         if (from.equals(to) || this.board.getHexagon(to) != null) {
             return false;
         }
-        if (!routeExists(from, to, this.board)) {
+        if (!routeExists(from, to)) {
             return false;
         }
-
+        if (this.board.getHexagon(from).peek().getTile() == Tile.SPIDER) {
+            boolean t = true;
+        }
         this.board.pop(from);
         this.board.put(to, this);
         boolean result = this.board.isValidState();

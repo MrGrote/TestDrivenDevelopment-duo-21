@@ -136,7 +136,8 @@ public class Board {
             }
 
         }
-        return this.field.keySet().equals(allPoints);
+        boolean result = this.field.keySet().equals(allPoints);
+        return result;
     }
     /** Removes a point from the board.
      * @param point the point on the field*/
@@ -185,9 +186,11 @@ public class Board {
      * @return boolean indicating wether the push can be done.
      */
     public boolean canPush(final Point from, final Point to) {
+
         Set<Point> toNeighbours = getOccupiedNeigbours(to);
         toNeighbours.add(to);
         Set<Point> fromNeighbours = getOccupiedNeigbours(from);
+        // Shared neighbours
         fromNeighbours.retainAll(toNeighbours);
 
         if (fromNeighbours.size() == 1) {
@@ -199,7 +202,7 @@ public class Board {
                 .map(this::getHeight)
                 .min(Integer::compare)
                 .get();
-        return minimum <= max(this.getHeight(from),
+        return minimum <= max(this.getHeight(from) - 1,
                 this.getHeight(to));
     }
 

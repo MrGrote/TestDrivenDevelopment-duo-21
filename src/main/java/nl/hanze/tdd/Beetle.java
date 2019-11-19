@@ -30,6 +30,7 @@ public final class Beetle  implements GamePiece {
         if (!Arrays.asList(this.board.getNeigbours(from)).contains(to)) {
             return false;
         }
+
         if (!this.board.canPush(from, to)) {
             return false;
         }

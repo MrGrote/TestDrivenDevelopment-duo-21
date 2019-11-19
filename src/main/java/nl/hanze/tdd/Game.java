@@ -208,20 +208,25 @@ class Game implements Hive {
     private boolean canMove() {
         Set<Point> border = getBorder();
         for (Point point : new HashSet<>(this.board.keySet())) {
-            for (Point destination : border) {
-                if (this.board.getHexagon(point)
-                              .peek()
-                              .isLegalMove(point, destination)) {
-                    return true;
+            if (this.board.getHexagon(point).peek().getColour()
+                == currentPlayer) {
+                for (Point destination : border) {
+                    if (this.board.getHexagon(point)
+                                .peek()
+                                .isLegalMove(point, destination)) {
+                        return true;
+                    }
                 }
-            }
+        }
         }
         return false;
     }
 
     @Override
     public void pass() throws IllegalMove {
-        if (!canPlay() && !canMove()) {
+        boolean canPlay = canPlay();
+        boolean canMove = canMove();
+        if (!canPlay && !canMove) {
             this.currentPlayer = getOpponent(this.currentPlayer);
         } else {
             throw new IllegalMove();
