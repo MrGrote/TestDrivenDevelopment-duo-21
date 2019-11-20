@@ -61,68 +61,6 @@ class GameTests {
     }
 
     @Test
-    void whenMadePassNextActive() throws IllegalMove {
-            game.play(Tile.GRASSHOPPER, 0, 0);
-            game.play(Tile.GRASSHOPPER, 0, -1);
-            game.play(Tile.SOLDIER_ANT, 0, 1);
-            game.play(Tile.QUEEN_BEE, -1, -1);
-            game.play(Tile.QUEEN_BEE, 1, 0);
-            game.play(Tile.SOLDIER_ANT, 1, -2);
-            game.move(0, 1, 1, -3);
-            game.play(Tile.SOLDIER_ANT, -2, 0);
-            game.play(Tile.SPIDER, -1, 1);
-            game.move(-2, 0, -1, 2);
-            game.play(Tile.SOLDIER_ANT, 2, -1);
-            game.play(Tile.SPIDER, 0, 2);
-            game.move(2, -1, 0, 3);
-            game.play(Tile.SOLDIER_ANT, -2, 0);
-            game.play(Tile.SPIDER, -1, 4);
-            game.move(-2, 0, -1, 5);
-            game.play(Tile.SOLDIER_ANT, 2, -1);
-            game.play(Tile.GRASSHOPPER, -2, -1);
-            game.move(2, -1, -2, 6);
-            game.play(Tile.GRASSHOPPER, -2, 0);
-            game.play(Tile.BEETLE, 0, -3);
-            game.move(-2, 0, 0, -2);
-            game.move(1, -3, 2, -3);
-            game.move(-2, -1, 1, -1);
-            game.move(0, -3, 0, -2);
-            game.play(Tile.BEETLE, -2, 0);
-            game.play(Tile.BEETLE, 0, -3);
-            game.move(0, -1, 0, -4);
-            game.move(2, -3, -3, 0);
-            game.play(Tile.SPIDER, 2, -2);
-            game.move(1, 0, 2, -1);
-            game.move(2, -2, 2, 0);
-            game.move(0, -2, 1, -2);
-            game.play(Tile.BEETLE, -1, -4);
-            game.play(Tile.GRASSHOPPER, 2, -3);
-            game.move(-1, -4, -1, -3);
-            game.move(1, -2, 0, -2);
-            game.move(0, -4, -2, -2);
-            game.move(-3, 0, -3, 1);
-            game.move(2, 0, 2, -2);
-            game.move(2, -1, 3, -2);
-            game.move(-2, -2, 0, -4);
-            game.play(Tile.GRASSHOPPER, -3, 6);
-            game.move(-1, -3, 0, -3);
-            game.move(0, -2, -1, -1);
-            game.move(0, -3, 0, -2);
-            game.move(-1, -1, 0, -2);
-            game.move(0, -4, 0, -1);
-            game.move(-3, 6, -1, 6);
-            game.move(0, -1, 3, -4);
-            game.move(0, -3, 0, -2);
-            game.move(3, -4, 0, -1);
-            game.move(0, -2, 0, -1);
-            game.move(1, -1, 1, -3);
-            game.move(-2, 6, 1, -4);
-            game.pass();
-
-        assertEquals(Player.WHITE, game.getCurrentPlayer());
-    }
-
-    @Test
     void whenPlayPlayedPieceThenIllegalMove() {
         try {
             game.play(Tile.QUEEN_BEE, 0, 0);
