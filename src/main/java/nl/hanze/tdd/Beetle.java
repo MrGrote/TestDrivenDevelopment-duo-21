@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 public final class Beetle  implements GamePiece {
 
-     /** The Queen Bee's tile.   */
+     /** The Beetle's tile.   */
     private final Tile tile = Tile.BEETLE;
     /** The colour of the Beetle. */
     private final Player colour;
@@ -16,9 +16,9 @@ public final class Beetle  implements GamePiece {
     private final Board board;
 
     /**
-     * Create a new QueenBee.
+     * Create a new Beetle.
      * @param colour The colour of the tile.
-     * @param board The board the  beetle is on
+     * @param board The board the beetle is on
      */
     public Beetle(final Player colour, final Board board) {
         this.colour = colour;

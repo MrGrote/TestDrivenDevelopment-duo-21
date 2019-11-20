@@ -4,26 +4,23 @@ import nl.hanze.hive.Hive.Tile;
 import nl.hanze.hive.Hive.Player;
 
 import java.awt.Point;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 
 public final class Spider  implements GamePiece {
 
     /** The length of a spiders path. */
     private static final int PATH_LENGTH = 3;
 
-     /** The Queen Bee's tile.   */
+     /** The Spider's tile.   */
     private final Tile tile = Tile.SPIDER;
-    /** The colour of the Beetle. */
+    /** The colour of the Spider. */
     private final Player colour;
-    /** The board the beetle is on. */
+    /** The board the spider is on. */
     private final Board board;
 
     /**
-     * Create a new QueenBee.
+     * Create a new Spider.
      * @param colour The colour of the tile.
      * @param board The board the spider is on.
      */
@@ -77,9 +74,6 @@ public final class Spider  implements GamePiece {
         }
         if (!routeExists(from, to)) {
             return false;
-        }
-        if (this.board.getHexagon(from).peek().getTile() == Tile.SPIDER) {
-            boolean t = true;
         }
         this.board.pop(from);
         this.board.put(to, this);

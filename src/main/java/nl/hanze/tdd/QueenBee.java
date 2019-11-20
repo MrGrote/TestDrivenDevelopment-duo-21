@@ -10,9 +10,9 @@ public final class QueenBee  implements GamePiece {
 
      /** The Queen Bee's tile.   */
     private final Tile tile = Tile.QUEEN_BEE;
-    /** The colour of the Beetle. */
+    /** The colour of the Queen Bee. */
     private final Player colour;
-    /** The board the beetle is on. */
+    /** The board the queen bee is on. */
     private final Board board;
 
     /**
